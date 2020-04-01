@@ -23,19 +23,16 @@ HG_QVAL = "qval"
 HG_VALUE = "value"
 HG_TABLE_HEADERS = [HG_GO_ROOT, HG_GO_ID, HG_GO_NAME, HG_VALUE, HG_PVAL, HG_QVAL]
 
+assoc=None
+
 def check_enrichment(gene_list):
     ensembl_for_url = re.sub("\.\d{1,2},", ",", gene_list)
     url = "http://david.abcc.ncifcrf.gov/api.jsp?type=ENSEMBL_GENE_ID&ids={}&tool=chartReport&annot=GOTERM_BP_DIRECT,GOTERM_CC_DIRECT,GOTERM_MF_DIRECT,KEGG_PATHWAY".format(ensembl_for_url)
     return url
 
-def check_group_enrichment(tested_gene_file_name, total_gene_file_name, algo = "", module = "", method="goatools"):
-    if method=="goatools":
-        return check_group_enrichment_goatools(tested_gene_file_name, total_gene_file_name)
-    else:
-        raise Exception
 
 
-def check_group_enrichment_goatools(tested_gene_file_name, total_gene_file_name, th=0.05):
+def check_group_enrichment(tested_gene_file_name, total_gene_file_name, go_folder, th=1):
     if len(tested_gene_file_name) == 0 or len(total_gene_file_name) == 0: return []
 
     if type(total_gene_file_name) == str:
@@ -48,29 +45,30 @@ def check_group_enrichment_goatools(tested_gene_file_name, total_gene_file_name,
     else:
         tested_gene_list = tested_gene_file_name
 
-    if not os.path.exists(os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)):
+    if not os.path.exists(os.path.join(go_folder, constants.GO_FILE_NAME)):
         download(constants.GO_OBO_URL, constants.GO_DIR)
 
-    obo_dag = GODag(os.path.join(constants.GO_DIR, constants.GO_FILE_NAME))
+    obo_dag = GODag(os.path.join(go_folder, constants.GO_FILE_NAME))
 
-    if not os.path.exists(os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME)):
+    if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME)):
         download(constants.GO_ASSOCIATION_GENE2GEO_URL, constants.GO_DIR)
-        with gzip.open(os.path.join(constants.GO_DIR, os.path.basename(constants.GO_ASSOCIATION_GENE2GEO_URL)), 'rb') as f_in:
-            with open(os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME),'wb') as f_out:
+        with gzip.open(os.path.join(go_folder, os.path.basename(constants.GO_ASSOCIATION_GENE2GEO_URL)), 'rb') as f_in:
+            with open(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME),'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
-    assoc = read_ncbi_gene2go(os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME), no_top=True)
+    global assoc
+    if assoc == None:
+        assoc = read_ncbi_gene2go(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME), no_top=True)
 
     g = GOEnrichmentStudy([int(cur) for cur in ensembl2entrez_convertor(total_gene_list)],
-                          assoc, obo_dag, methods=["fdr_bh"], log=None) # "bonferroni", "fdr_bh"
+                          assoc, obo_dag, log=None) # "bonferroni", "fdr_bh"
     g_res = g.run_study([int(cur) for cur in ensembl2entrez_convertor(tested_gene_list)])
 
-    GO_results = [(cur.NS, cur.GO, cur.goterm.name, cur.pop_count, cur.p_uncorrected, cur.p_fdr_bh) for cur in g_res if
-                  cur.p_fdr_bh <= th]
+    GO_results = [(cur.NS, cur.GO, cur.goterm.name, cur.pop_count, cur.p_uncorrected) for cur in g_res ] # , cur.p_fdr_bh    if cur.p_fdr_bh <= th
 
 
-    hg_report = [{HG_GO_ROOT : cur[0], HG_GO_ID : cur[1], HG_GO_NAME : cur[2], HG_VALUE : cur[3], HG_PVAL : cur[4] , HG_QVAL : cur[5]} for cur in GO_results] # , HG_QVAL : cur[5]
-    hg_report.sort(key=lambda x: x[HG_QVAL])
+    hg_report = [{HG_GO_ROOT : cur[0], HG_GO_ID : cur[1], HG_GO_NAME : cur[2], HG_VALUE : cur[3], HG_PVAL : cur[4]} for cur in GO_results] # , HG_QVAL : cur[5]
+    hg_report.sort(key=lambda x: x[HG_PVAL]) # HG_QVAL
 
     return hg_report
 

@@ -29,9 +29,7 @@ def calc_emp_pval(cur_rv, cur_dist):
     return str(emp_pvals)
 
 
-def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 300, n_total_samples = None, n_start_i=None, limit = 10000,
-                  md_path=os.path.join(constants.OUTPUT_GLOBAL_DIR, "emp_fdr", "MAX", "emp_diff_modules_{}_{}_md.tsv"), \
-                  dist_path=os.path.join(constants.OUTPUT_GLOBAL_DIR, "emp_fdr", "MAX","emp_diff_modules_{}_{}.tsv")):
+def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 300, n_total_samples = None, n_start_i=None, limit = 10000, md_path=None, dist_path=None):
 
 
     output_md = pd.read_csv(md_path.format(dataset_sample, algo_sample), sep='\t', index_col=0).dropna()
@@ -108,21 +106,18 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
     df_dists["emp"] = pd.Series(emp_dists, index=output.index[:limit])
     max_emp_pvals = np.sort([x if x != 0 else 1.0 / n_dist_samples for x in max_emp_pvals])
     print("max emp pvals len: {}".format(len(max_emp_pvals)))
-    open(os.path.join(constants.OUTPUT_GLOBAL_DIR , "consistent_pval.txt"),'w+').write("\n".join([str(a) for a in max_emp_pvals]))
     print("min vals", 1.0 / n_dist_samples, np.min(list(max_emp_pvals) + [1]))
-    zero_bool=[x<=0.004 for x in max_emp_pvals]
     print("max_genes_pvals: {}".format(max_genes_pvals.shape[0]))
-    open(os.path.join(constants.OUTPUT_GLOBAL_DIR, "consistent.txt"), 'w+').write("\n".join(str(list(max_emp_pvals))[1:-1].split(", ")))
     fdr_bh_results = fdrcorrection0(max_emp_pvals, alpha=0.05, method='indep', is_sorted=False)[0]
     n_emp_true=np.sum(fdr_bh_results)
     print("n_emp_true: {}".format(n_emp_true))
 
     if n_emp_true==0: 
-       BH_TH=0
+       EMP_TH=0
     else: 
-       BH_TH=np.sort(max_emp_pvals)[n_emp_true-1]
+       EMP_TH=np.sort(max_emp_pvals)[n_emp_true-1]
      
-    mask_terms=np.array([a<=BH_TH for a in emp_pvals])
+    mask_terms=np.array([max(a, 1.0 / n_dist_samples)<=EMP_TH for a in emp_pvals])
     go_ids_result=np.array([])
     go_names_result=np.array([])
     n_emp_true=0
@@ -133,39 +128,41 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
        n_emp_true =np.sum(mask_terms)
 
 
-    print("BH cutoff: {} # true terms passed BH cutoff: {}".format(BH_TH, n_emp_true))
+    print("EMP cutoff: {} # true terms passed EMP cutoff: {}".format(EMP_TH, n_emp_true))
 
-    return BH_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms
+    return EMP_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms
 
 
 def main():
 
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset', dest='dataset', default="TNFa_2")
-    parser.add_argument('--algo', dest='algo', default="my_netbox_td")
-    parser.add_argument('--omic_type', dest='omic_type', default="GE")
-    parser.add_argument('--output_folder', dest='output_folder', default=None)
-    parser.add_argument('--n_total_samples', help="n_total_samples", dest='n_total_samples', default=5000)
-    parser.add_argument('--n_dist_samples', help="n_dist_samples", dest='n_dist_samples', default=5000)
+    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data1/emp_test/datasets/scz.tsv")
+    parser.add_argument('--algo', dest='algo', default="DOMINO")
+    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data1/emp_test/report")
+    parser.add_argument('--n_total_samples', help="n_total_samples", dest='n_total_samples', default=10)
+    parser.add_argument('--n_dist_samples', help="n_dist_samples", dest='n_dist_samples', default=10)
+
 
     args = parser.parse_args()
-    dataset=args.dataset
+    dataset_file=args.dataset_file
     algo=args.algo
-    omic_type = args.omic_type
     n_total_samples=int(args.n_total_samples)
     n_dist_samples = int(args.n_dist_samples)
-    output_folder = args.output_folder
-    if output_folder is None:
-        output_folder=os.path.join(dataset,"output")
+    report_folder = args.report_folder
 
-    print("about to calculate pval for {},_{}".format(dataset, algo))
+    dataset_name=os.path.splitext(os.path.split(dataset_file)[1])[0]
+    print("about to calculate pval for {},_{}".format(dataset_name, algo))
+
+
+    md_path=os.path.join(report_folder, "emp_diff_modules_{}_{}_md.tsv")
+    dist_path=os.path.join(report_folder,"emp_diff_modules_{}_{}.tsv")
 
     BH_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms = \
-        calculate_sig(algo, dataset, n_dist_samples, n_total_samples)
+        calculate_sig(algo, dataset_name, n_dist_samples, n_total_samples, md_path=md_path, dist_path=dist_path)
+
 
     output_md = pd.read_csv(
-        os.path.join(constants.OUTPUT_GLOBAL_DIR, "emp_fdr", "MAX",
-                     "emp_diff_modules_{}_{}_md.tsv".format(dataset, algo)),
+        os.path.join(report_folder, "emp_diff_modules_{}_{}_md.tsv".format(dataset_name, algo)),
         sep='\t', index_col=0)
 
     output_md.loc[mask_ids,"passed_oob_permutation_test"]="[False]"
@@ -179,8 +176,10 @@ def main():
         output_md['emp_pval_max']=output_md['emp_pval'].apply(lambda a: np.min(np.array(a[1:-1].split(", "),dtype=np.float)) if type(a)==str else "" )
 
     output_md.to_csv(
-        os.path.join(constants.OUTPUT_GLOBAL_DIR, "emp_fdr", "MAX",
-                     "emp_diff_modules_{}_{}_passed_oob.tsv".format(dataset, algo)),
+        os.path.join(report_folder, "emp_diff_modules_{}_{}_passed_oob.tsv".format(dataset_name, algo)),
         sep='\t')
 
+
+if __name__ == "__main__":
+    main()
 

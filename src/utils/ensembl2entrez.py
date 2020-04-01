@@ -9,7 +9,7 @@ entrez2ensembl_dict = None
 
 def load_gene_dictionary(gene_list_file_name, gene_list_path=None):
     if gene_list_path == None:
-        gene_list_path = os.path.join(constants.DICTIONARIES_DIR,gene_list_file_name)
+        gene_list_path = os.path.join(constants.dir_path,"data",gene_list_file_name)
     f = open(gene_list_path,'r')
     lines = [l.strip() for l in f]
     f.close()
@@ -51,7 +51,7 @@ def ensembl2entrez_convertor(e_ids):
         ensembl2entrez_dict = get_ensembl2entrez_dictionary()
     results = []
     for cur in e_ids:
-        if ensembl2entrez_dict.has_key(cur.split(".")[0]):
+        if cur.split(".")[0] in ensembl2entrez_dict:
             results.append(ensembl2entrez_dict[cur.split(".")[0]])
     return results
 

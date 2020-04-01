@@ -16,7 +16,7 @@ from src.utils.ensembl2gene_symbol import e2g_convertor
 import zipfile
 
 from src.utils.go import check_group_enrichment
-import src.go as go
+import src.utils.go as go
 import multiprocessing
 from src.utils.daemon_multiprocessing import func_star
 
@@ -34,14 +34,14 @@ def zipdir(path_to_zip, zip_file_path):
         for file in files:
             ziph.write(os.path.join(root, file))
 
-def get_network_genes(network_name="dip", h_src="ID_interactor_A", h_dst="ID_interactor_B"):
-    network_df = pd.read_csv(os.path.join(constants.NETWORKS_DIR, network_name+".sif"), sep="\t")
-    src = np.array(network_df[h_src])
-    dst = np.array(network_df[h_dst])
+def get_network_genes(network_file, h_src="ID_interactor_A", h_dst="ID_interactor_B"):
+    df_network = pd.read_csv(network_file, sep="\t")
+    src = np.array(df_network[h_src])
+    dst = np.array(df_network[h_dst])
     vertices = list(set(np.append(src, dst)))
     return vertices
 
-def remove_subgraph_self_loops(nodes_to_remove, network_file_name=os.path.join(constants.NETWORKS_DIR,"dip.sif"), h_src="ID_interactor_A", h_dst="ID_interactor_B"):
+def remove_subgraph_self_loops(nodes_to_remove, network_file_name, h_src="ID_interactor_A", h_dst="ID_interactor_B"):
     if len(nodes_to_remove) == 0:
         return network_file_name
     network_df = pd.read_csv(network_file_name, sep="\t")
@@ -50,7 +50,7 @@ def remove_subgraph_self_loops(nodes_to_remove, network_file_name=os.path.join(c
     filtered_network.to_csv(new_file_name, sep="\t", index=False)
     return filtered_network
 
-def remove_subgraph_by_nodes(nodes_to_remove, network_file_name=os.path.join(constants.NETWORKS_DIR,"dip.sif"), h_src="ID_interactor_A", h_dst="ID_interactor_B", ts=str(time.time())):
+def remove_subgraph_by_nodes(nodes_to_remove, network_file_name, h_src="ID_interactor_A", h_dst="ID_interactor_B", ts=str(time.time())):
     if len(nodes_to_remove) == 0:
         return network_file_name
     network_df = pd.read_csv(network_file_name, sep="\t")
@@ -61,19 +61,18 @@ def remove_subgraph_by_nodes(nodes_to_remove, network_file_name=os.path.join(con
 
 
 
-def summary_intergrative_reports(all_hg_reports, modules_summary, total_hg_report, algo_name, module_genes, report_file_name):
+# def summary_intergrative_reports(all_hg_reports, modules_summary, total_hg_report, algo_name, module_genes, report_file_name):
+#
+#     general_algo_report(algo_name, all_hg_reports, module_genes, modules_summary, report_file_name, total_hg_report)
+#
+#     if constants.EMB_MODE:
+#         module_enrichment_report(algo_name, report_file_name, "hg_samples", total_hg_report)
 
-    general_algo_report(algo_name, all_hg_reports, module_genes, modules_summary, report_file_name, total_hg_report)
 
-    if constants.EMB_MODE:
-        emb_score_report(algo_name, report_file_name, "hg_samples", total_hg_report)
-
-
-def emb_score_report(algo_name, report_file_name, hg_sample_file_name, hg_report):
-    samples = [{go.HG_GO_ID : cur_term[go.HG_GO_ID], go.HG_GO_NAME : cur_term[go.HG_GO_NAME], go.HG_GO_ROOT : cur_term[go.HG_GO_ROOT], go.HG_VALUE : cur_term[go.HG_VALUE], go.HG_PVAL : cur_term[go.HG_PVAL], go.HG_QVAL : cur_term[go.HG_QVAL] } for cur_term in hg_report]
+def module_enrichment_report(algo_name, report_file_name, hg_sample_file_name, hg_report, output_folder):
+    samples = [{go.HG_GO_ID : cur_term[go.HG_GO_ID], go.HG_GO_NAME : cur_term[go.HG_GO_NAME], go.HG_GO_ROOT : cur_term[go.HG_GO_ROOT], go.HG_VALUE : cur_term[go.HG_VALUE], go.HG_PVAL : cur_term[go.HG_PVAL], go.HG_QVAL : -1 } for cur_term in hg_report] # cur_term[go.HG_QVAL]
     df_emb = pd.DataFrame(samples)
-    df_emb.to_csv(os.path.join(constants.OUTPUT_GLOBAL_DIR, algo_name,
-                     "{}_{}.tsv".format(report_file_name, hg_sample_file_name)),sep="\t", index=False)
+    df_emb.to_csv(os.path.join(output_folder, "{}_{}.tsv".format(report_file_name, hg_sample_file_name)),sep="\t", index=False)
     return df_emb
 
 
@@ -187,7 +186,7 @@ def draw_network(modules, score_file_name, network_file_name, h_src="ID_interact
 
 
 
-def build_all_reports(algo_name, output_folder, modules, all_bg_genes, score_file_name, network_file_name):
+def build_all_reports(algo_name, modules, all_bg_genes, go_folder, output_folder):
 
 
     if not os.path.exists(output_folder):
@@ -202,7 +201,7 @@ def build_all_reports(algo_name, output_folder, modules, all_bg_genes, score_fil
     for i, module in enumerate(modules):
         # params.append([module_report, [algo_name, i, module, all_bg_genes[i], score_file_name, network_file_name, dataset_name, all_hg_reports,
         #      modules_summary]])
-        module_report(algo_name, i, module, all_bg_genes[i], score_file_name, network_file_name, all_hg_reports, modules_summary)
+        module_report(algo_name, i, module, all_bg_genes[i], go_folder, output_folder, modules_summary)
 
     # p.map(func_star, params)
 
@@ -217,47 +216,39 @@ def build_all_reports(algo_name, output_folder, modules, all_bg_genes, score_fil
         bg_genes = all_bg_genes[0]
 
     df_summary.to_csv(
-        os.path.join(output_folder, algo_name, "modules_summary.tsv"), sep="\t")
-    generate_algo_report(algo_name, modules, bg_genes, all_hg_reports, modules_summary, "all_modules")
+        os.path.join(output_folder, "modules_summary.tsv"), sep="\t")
+    # generate_algo_report(algo_name, modules, bg_genes, all_hg_reports, modules_summary, "all_modules")
 
 
     return output_folder
 
 
 
-def get_k_threshold_modules(modules, all_hg_reports, modules_summary):
-    modules_larger_than_k = [cur for cur in modules if len(cur) >= MODULE_TH]
-    module_larger_than_k_genes = list(set(reduce((lambda x, y: x + y), modules_larger_than_k, [])))
-    k_modules_summary = [modules_summary[i] for i, cur in enumerate(modules) if len(cur) >= MODULE_TH]
-    k_hg_reports = []
-    if constants.HG_MODE:
-        k_hg_reports = [all_hg_reports[i] for i, cur in enumerate(modules) if len(cur) >= MODULE_TH]
-    return modules_larger_than_k, module_larger_than_k_genes, k_hg_reports, k_modules_summary
+# def generate_algo_report(algo_name, modules, bg_genes, all_hg_reports, modules_summary, report_name):
+#     hg_report = []
+#     module_genes = list(set([gene for module in modules for gene in module]))
+#     if (constants.HG_MODE or constants.EMB_MODE) and constants.ALGO_HG_MODE:
+#         hg_report = check_group_enrichment(module_genes, bg_genes, algo_name)
+#
+#     summary_intergrative_reports(all_hg_reports, modules_summary, hg_report, algo_name, module_genes, report_name)
 
 
-def generate_algo_report(algo_name, modules, bg_genes, all_hg_reports, modules_summary, report_name):
-    hg_report = []
-    module_genes = list(set([gene for module in modules for gene in module]))
-    if (constants.HG_MODE or constants.EMB_MODE) and constants.ALGO_HG_MODE:
-        hg_report = check_group_enrichment(module_genes, bg_genes, algo_name)
-
-    summary_intergrative_reports(all_hg_reports, modules_summary, hg_report, algo_name, module_genes, report_name)
-
-
-def module_report(algo_name, module_index, module, bg_genes, score_file_name, network_file_name, all_hg_reports=None, modules_summary=None):
+def module_report(algo_name, module_index, module, bg_genes, go_folder, output_folder, modules_summary):
     print("summarize module {} for algo {}".format(module_index, algo_name))
 
-    open(os.path.join(constants.OUTPUT_DIR, "{}_module_genes_{}.txt".format(algo_name, module_index)), "w+").write(
+    open(os.path.join(output_folder, "{}_module_genes_{}.txt".format(algo_name, module_index)), "w+").write(
         "\n".join(module))
-    open(os.path.join(constants.OUTPUT_DIR, "{}_bg_genes_{}.txt".format(algo_name, module_index)), "w+").write(
+    open(os.path.join(output_folder, "{}_bg_genes_{}.txt".format(algo_name, module_index)), "w+").write(
         "\n".join(bg_genes))
     modules_summary_row = {SH_MODULE_NAME: module_index, SH_NUM_GENES: len(module)}
-    hg_report = []
-    if constants.HG_MODE:
-        hg_report = check_group_enrichment(list(module), list(bg_genes), algo_name, str(module_index))
-        modules_summary_row[SH_ENRICHED] = len(hg_report)
-        emb_score_report(algo_name, "module_" + str(module_index), "separated_modules_hg_samples", hg_report)
 
-    return hg_report, modules_summary_row
+    hg_report = check_group_enrichment(list(module), list(bg_genes), go_folder)
+    modules_summary_row[SH_ENRICHED] = len(hg_report)
+    module_enrichment_report(algo_name, "module_" + str(module_index), "separated_modules_hg_samples", hg_report, output_folder)
+
+    if modules_summary is not None:
+        modules_summary.append(modules_summary_row)
+
+    return modules_summary_row
 
 

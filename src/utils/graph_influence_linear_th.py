@@ -67,10 +67,10 @@ def linear_threshold(G, seeds, steps=0):
 
   # init thresholds
   for n in DG.nodes():
-    if 'threshold' not in DG.node[n]:
-      DG.node[n]['threshold'] = 0.5
-    elif DG.node[n]['threshold'] > 1:
-      raise Exception("node threshold:", DG.node[n]['threshold'], \
+    if 'threshold' not in DG.nodes[n]:
+      DG.nodes[n]['threshold'] = 0.5
+    elif DG.nodes[n]['threshold'] > 1:
+      raise Exception("node threshold:", DG.nodes[n]['threshold'], \
           "cannot be larger than 1")
 
   # init influences
@@ -121,7 +121,7 @@ def _diffuse_one_round(G, A):
       if nb in A:
         continue
       active_nb = list(set(G.predecessors(nb)).intersection(set(A)))
-      if _influence_sum(G, active_nb, nb) >= G.node[nb]['threshold']:
+      if _influence_sum(G, active_nb, nb) >= G.nodes[nb]['threshold']:
         activated_nodes_of_this_round.add(nb)
   A.extend(list(activated_nodes_of_this_round))
   return A, list(activated_nodes_of_this_round)

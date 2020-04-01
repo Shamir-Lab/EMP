@@ -72,14 +72,11 @@ def load_gene_expression_profile(gene_list_file_name=None, gene_expression_file_
 
     else:
         gene_list = [l.split(".")[0] for i, l in enumerate(gene_list)]
-        print stopwatch.stop("done loading gene list")
-        # random.shuffle(gene_list)
-        # gene_list = gene_list[:400]
+
         if gene_filter_file_name:
             stopwatch.start()
             filter_gene_list = load_gene_list(gene_list_file_name=gene_filter_file_name, gene_list_path=gene_filter_path)
             gene_list = [cur for cur in gene_list if cur in filter_gene_list]
-            print stopwatch.stop("done filter gene list")
 
         if gene_expression_path == None:
             gene_expression_path = os.path.join(constants.DATA_DIR, gene_expression_file_name)
@@ -90,11 +87,9 @@ def load_gene_expression_profile(gene_list_file_name=None, gene_expression_file_
     expression_profiles_filtered = [x for x in expression_profiles_filtered if len(x) == len(expression_profiles_filtered[0])]
     # or l.strip()[0:l.strip().find('\t')] in gene_list or l.strip()[0:l.strip().find('\t')].split(".")[0] in gene_list
     f.close()
-    print stopwatch.stop("done filter gene expression")
     if not by_gene:
         stopwatch.start()
         expression_profiles_filtered = np.flip(np.rot90(expression_profiles_filtered, k=1, axes=(1,0)),1)
-        print stopwatch.stop("done rotate gene expression")
 
     return expression_profiles_filtered
 

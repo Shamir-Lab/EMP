@@ -5,133 +5,154 @@ import argparse
 
 import pandas as pd
 import numpy as np
-import shutil
 import multiprocessing
 import os
 
 from pandas.errors import EmptyDataError
 
-from src import constants
 from src.utils import goids2gonames
 from src.utils.daemon_multiprocessing import func_star
-from src.utils.randomize_data import get_permutation_name
-from src.runners.datasets_multithread_runner import run_dataset
+from src.utils.randomize_data import get_permuted_folder_name
 
-def calc_dist(algos, datasets, shared_list=None, is_max=True):
+
+def get_best_module_sig_score(report_folder, shared_list):
+
     try:
 
-        for cur_algo in algos:
-            algos_filter = cur_algo
+        df_go_pvals = pd.DataFrame()
+        df_go_pvals.index.name="GO id"
 
-            df_go_pvals = pd.DataFrame()
-            df_go_pvals.index.name="GO id"
-            for cur_ds in datasets:
-                print("fetch permutation {}".format(cur_ds))
-                n_modules=len(pd.read_csv(os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo, "modules_summary.tsv"), sep='\t').index)
-                go_results = [os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo, cur_module) for cur_algo in
-                              os.listdir(os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds))
-                              if os.path.isdir(
-                        os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo)) and cur_algo ==  algos_filter for
-                              cur_module in os.listdir(os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo)) if
-                              "separated_modules" in cur_module and int(cur_module.split("_")[1]) < n_modules]
+        print("fetch permutation {}".format(report_folder))
+        n_modules=len(pd.read_csv(os.path.join(report_folder, "modules_summary.tsv"), sep='\t').index)
+        go_results = [os.path.join(report_folder, cur_module) for cur_module in os.listdir(report_folder) if
+                      "separated_modules" in cur_module and int(cur_module.split("_")[1]) < n_modules]
 
-                for cur in go_results:
-                    try:
-                        df_go_pvals = pd.concat((df_go_pvals, pd.read_csv(cur, sep='\t').set_index("GO id")['pval']), axis=1)
-
-                        if is_max:
-                            df_go_pvals[df_go_pvals.isna()] = 1
-                            df_go_pvals=df_go_pvals.min(axis=1).to_frame()
-
-                    except EmptyDataError as e:
-                        print(e)
-                        pass
-                if len(go_results)==0:
-                    df_go_pvals=pd.DataFrame(data=np.array([[1]]),index=["GO:0008150"])
-
-            if not is_max:
+        for cur in go_results:
+            try:
+                df_go_pvals = pd.concat((df_go_pvals, pd.read_csv(cur, sep='\t').set_index("GO id")['pval']), axis=1)
                 df_go_pvals[df_go_pvals.isna()] = 1
+                df_go_pvals=df_go_pvals.min(axis=1).to_frame()
 
-            if shared_list is not None:
-                shared_list.append(df_go_pvals)
-                print("done aggregate {} permutations".format(len(shared_list)))
+            except EmptyDataError as e:
+                print(e)
+                pass
 
-            return df_go_pvals
+        if len(df_go_pvals.index)==0:
+            df_go_pvals=pd.DataFrame(data=np.array([[1]]),index=["GO:0008150"])
+
+
+        if shared_list is not None:
+            shared_list.append(df_go_pvals)
+            print("done aggregate {} permutations".format(len(shared_list)))
+
+        return df_go_pvals
+
     except Exception as e:
-       print(Exception, e)
-       pass
+           print(Exception, e)
+           pass
+
+
+def get_all_modules_sig_scores(report_folder, shared_list=None):
+
+    try:
+
+        df_go_pvals = pd.DataFrame()
+        df_go_pvals.index.name="GO id"
+
+        print("fetch permutation {}".format(report_folder))
+        n_modules=len(pd.read_csv(os.path.join(report_folder, "modules_summary.tsv"), sep='\t').index)
+        go_results = [os.path.join(report_folder, cur_module) for cur_module in os.listdir(report_folder) if
+                      "separated_modules" in cur_module and int(cur_module.split("_")[1]) < n_modules]
+
+        for cur in go_results:
+            try:
+                df_go_pvals = pd.concat((df_go_pvals, pd.read_csv(cur, sep='\t').set_index("GO id")['pval']), axis=1)
+
+            except EmptyDataError as e:
+                print(e)
+                pass
+
+        if len(df_go_pvals.index)==0:
+            df_go_pvals=pd.DataFrame(data=np.array([[1]]),index=["GO:0008150"])
+
+        df_go_pvals[df_go_pvals.isna()] = 1
+
+        if shared_list is not None:
+            shared_list.append(df_go_pvals)
+            print("done aggregate {} permutations".format(len(shared_list)))
+
+        return df_go_pvals
+
+    except Exception as e:
+           print(Exception, e)
+           pass
 
 
 def main():
 
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset', dest='dataset', default="SOC")
-    parser.add_argument('--algo', dest='algo', default="jactivemodules_greedy")
-    parser.add_argument('--omic_type', dest='omic_type', default="GE")
-    parser.add_argument('--network', dest='network', default="dip.sif")
-    parser.add_argument('--output_folder', dest='output_folder', default=None)
+    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data/emp_test/datasets/brca.tsv")
+    parser.add_argument('--algo', dest='algo', default="DOMINO")
+    parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default="/media/hag007/Data/emp_test/output")
+    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data/emp_test/output")
+    parser.add_argument('--go_folder', dest='go_folder', default="/media/hag007/Data1/emp_test/go")
+    parser.add_argument('--true_solution_folder', dest='true_solution_folder', default="/media/hag007/Data/emp_test/true_solutions")
     parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=0)
-    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=100)
-    parser.add_argument('--pf', dest='pf', help="parallelization factor", default=10)
-    parser.add_argument('--calc_true_scores', dest='calc_true_scores', default="true")
+    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=5)
+    parser.add_argument('--pf', help="parallelization_factor", dest='pf', default=5)
 
     args = parser.parse_args()
 
-    dataset=args.datasets
-    algo=args.algos
-    omic_type = args.omic_type
-    network_file_name = args.network
-    output_folder = args.output_folder
-    if output_folder is None:
-        output_folder=os.path.join(dataset,"output")
+    dataset_file=args.dataset_file
+    algo=args.algo
+    permuted_solutions_folder=args.permuted_solutions_folder
+    true_solution_folder = args.true_solution_folder
+    report_folder=args.report_folder
+    go_folder = args.go_folder
     n_start=int(args.n_start)
-    n_end=int(args.n_end)
-    calc_true_scores=args.calc_true_scores.lower()=="true"
+    n_end= int(args.n_end)
     pf=args.pf
 
+    manager = multiprocessing.Manager()
+    l_permutations_top_pvals = manager.list()
+    p = multiprocessing.Pool(int(pf))
 
-    for dataset in dataset:
+    params=[]
+    for cur_idx in range(n_start, n_end):
+        permuted_folder=get_permuted_folder_name(os.path.splitext(os.path.split(dataset_file)[1])[0], cur_idx)
+        sol_output_folder = os.path.join(permuted_solutions_folder, "sol_{}_{}".format(algo,permuted_folder), "report")
+        print (permuted_solutions_folder)
+        params.append([get_best_module_sig_score, [sol_output_folder, l_permutations_top_pvals]])
+        print(n_end)
+    p.map(func_star, params)
 
-        score_method = constants.PREDEFINED_SCORE
+    df_all_terms = pd.concat(list(l_permutations_top_pvals), axis=1)
+    df_all_terms=df_all_terms.fillna(1)
+    print("total # permutations: {}/{}".format(len(l_permutations_top_pvals), n_end-n_start))
 
-        for algo in algo:
-            manager = multiprocessing.Manager()
-            pvals = manager.list()
-            p = multiprocessing.Pool(int(pf))
-            params=[[calc_dist, [[algo], [get_permutation_name(omic_type, dataset, algo,  cur)], pvals]] for cur in range(n_start,n_end)]
+    dataset_name = os.path.splitext(os.path.split(dataset_file)[1])[0]
+    df_real_pvals = get_all_modules_sig_scores(os.path.join(true_solution_folder, "{}_{}".format(dataset_name,algo), "report"))
+    df_real_pvals=df_real_pvals.apply(lambda x: -np.log10(x))
 
-            p.map(func_star, params)
-            pvals=list(pvals)
-            df_all_terms = pd.concat(pvals, axis=1)
-            df_all_terms=df_all_terms.fillna(1)
-            print("total # permutations: {}/{}".format(len(pvals), n_end-n_start))
-            
-            if calc_true_scores:
-                if os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR,  "{}_{}".format(omic_type, dataset), algo)):
-                    shutil.rmtree(os.path.join(constants.OUTPUT_GLOBAL_DIR, "{}_{}".format(omic_type, dataset), algo))
-                run_dataset("{}_{}".format(omic_type, dataset), score_method=score_method,
-                            algos=[algo], network_file_name=network_file_name)
+    df_real_pvals_as_list = df_real_pvals.apply(lambda x: str(list(x)), axis=1).to_frame()
+    df_real_pvals_as_list.index = df_real_pvals.index
 
-            df_real_agg_pval=df_real_agg_pval.apply(lambda x: -np.log10(x))
-            df_real_max_pval=df_real_agg_pval.max(axis=1).to_frame()
+    print("total # real terms: {}".format(len(df_real_pvals.index)))
+    df_results=df_all_terms.apply(lambda row : str(list(-np.log10(row.values.astype(np.float)))), axis=1).to_frame()
+    df_results.columns = ['dist_n_samples']
+    missing_indices=set(df_real_pvals.index).difference(df_results.index)
+    print("missing_indices: {}".format(len(missing_indices)))
+    print("existing_indices: {}".format(len(df_results.index)))
 
-            df_real_agg_list_pval = df_real_agg_pval.apply(lambda x: str(list(-np.log10(x))), axis=1).to_frame()
-            df_real_agg_list_pval.index = df_real_agg_pval.index
+    for idx in missing_indices:
+        df_results.loc[idx, "dist_n_samples"]=str([0 for a in np.arange(n_start, n_end)])
 
-            print("total # real terms: {}".format(len(df_real_max_pval.index)))
-            df_results=df_all_terms.apply(lambda row : str(list(-np.log10(row.values.astype(np.float)))), axis=1).to_frame()
-            df_results.columns = ['dist_n_samples']
-            missing_indices=set(df_real_max_pval.index).difference(df_results.index)
-            df_real_agg_list_pval.loc[missing_indices, "dist_n_samples"]=str([0])
-            df_results['hg_pval']= df_real_agg_list_pval.iloc[:, 0]
-            df_results["GO name"] = pd.Series(goids2gonames.get_go_names(list(df_real_max_pval.index)),
-                                           index=df_real_max_pval.index)
-            df_results.loc[df_results["hg_pval"].isna().values, "hg_pval"] = 0
+    df_results['hg_pval']= df_real_pvals_as_list.iloc[:, 0]
+    df_results["GO name"] = pd.Series(goids2gonames.get_go_names(list(df_real_pvals.index), go_folder),
+                                   index=df_real_pvals.index)
+    df_results.to_csv(os.path.join(report_folder,"emp_diff_modules_{}_{}.tsv".format(dataset_name, algo)),  sep='\t', index_label="GO id")
 
-            df_results.to_csv(os.path.join(output_folder,"emp_diff_modules_{}_{}.tsv".format(dataset, algo)),  sep='\t', index_label="GO id")
-
-            print("permutation shape: {}".format(df_all_terms))
-   
+    print("permutation shape: {}".format(df_all_terms))
 
 if __name__ == "__main__":
     main()

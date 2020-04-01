@@ -14,7 +14,7 @@ from src.utils.ensembl2entrez import entrez2ensembl_convertor
 
 dict_result, go2geneids, geneids2go, entrez2ensembl = go_hierarcies.build_hierarcy(
     roots=['GO:0008150'])
-vertices = dict_result.values()[0]['vertices']
+vertices = list(dict_result.values())[0]['vertices']
 
 terms_to_genes = {}
 
@@ -43,7 +43,7 @@ def calc_empirical_pval(row, n_permutation):
         pval = np.array([float(x) for x in row["dist_n_samples"][1:-1].split(", ")])
 
         if len(pval) < n_permutation:
-            raise (ValueError, "too few samples: {} (expected at least {})".format(len(pval), n_permutation))
+            raise ValueError("too few samples: {} (expected at least {})".format(len(pval), n_permutation))
 
         else:
             hg_pval = np.array(hg_pval, dtype=np.float32)
@@ -63,7 +63,10 @@ def get_all_genes_for_term(vertices, cur_root, term, in_subtree):
     in_subtree = in_subtree or term == cur_root
     all_genes = set()
     if in_subtree:
-        all_genes.update(go2geneids[cur_root])
+        try:
+            all_genes.update(go2geneids[cur_root])
+        except Exception:
+            print("cur_root : {} was not found".format(cur_root))
 
     for cur_child in vertices[cur_root]["obj"].children:
         all_genes.update(get_all_genes_for_term(vertices, cur_child.id, term, in_subtree))
@@ -84,7 +87,7 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
 
     n_genes = [len(get_all_genes_for_term(vertices, cur_go_id, cur_go_id, cur_go_id == cur_go_id)) for i, cur_go_id in
                enumerate(df.index.values)]
-    depth = [dict_result.values()[0]['vertices'][cur_go_id]['D'] for i, cur_go_id in enumerate(df.index.values)]
+    depth = [list(dict_result.values())[0]['vertices'][cur_go_id]['D'] for i, cur_go_id in enumerate(df.index.values)]
     df["n_genes"] = pd.Series(n_genes, index=df.index)
     df["depth"] = pd.Series(depth, index=df.index)
     df = df.rename(columns={"filtered_pval": "hg_pval"})
@@ -134,8 +137,6 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
 
         pvals_corrected = reduce(lambda a, x: np.append(a, x), pvals_corrected, np.array([]))
         fdr_results = fdrcorrection0(max_pvals_corrected, alpha=0.05, method='indep', is_sorted=False)
-        open(os.path.join(constants.OUTPUT_GLOBAL_DIR, "md.txt"), 'w+').write(
-            "\n".join(str(list(np.sort(max_pvals_corrected)))[1:-1].split(', ')))
         max_true_counter = len([cur for cur in fdr_results[0] if cur == True])
         emp_cutoff = np.sort(np.sort(max_pvals_corrected))[max_true_counter - 1] if max_true_counter > 0 else 0
         print(": {} (emp cutoff: {}, n={})".format(max_true_counter, emp_cutoff, len(fdr_results[0])))
