@@ -1,15 +1,14 @@
-import constants
-import os 
+import os
 
 go_dict = None
 
 
-def get_go_names(GO_ids):
+def get_go_names(GO_ids, go_folder):
     GO_names = []
     global go_dict
     if go_dict is None:
         go_dict = {}
-        f = file(os.path.join(constants.GO_DIR, 'go-basic.obo'))
+        f = open(os.path.join(go_folder, 'go-basic.obo'))
         parsed = f.read().split("\n\n")
         for cur_obo in parsed[1:]:
             if cur_obo.split("\n")[0] != "[Term]": continue

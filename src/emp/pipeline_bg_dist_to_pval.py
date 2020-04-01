@@ -72,7 +72,7 @@ def main():
     n_start_param = "--n_start {}".format(n_start)
     n_end_param = "--n_end {}".format(n_end)
     pf_param = "--pf {}".format(pf)
-    calc_true_scores_param = "--recalc_true_modules {}".format(calc_true_scores)
+    calc_true_scores_param = "--calc_true_scores {}".format(calc_true_scores)
     n_iteration_param = "--n_iteration {}".format(n_iteration)
     n_total_samples_param = "--n_total_samples {}".format(n_total_samples)
     n_dist_samples_param = "--n_dist_samples {}".format(n_dist_samples)

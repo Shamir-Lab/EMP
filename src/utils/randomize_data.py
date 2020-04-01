@@ -7,8 +7,8 @@ import src.constants as constants
 import random
 
 
-def get_permutation_name(prefix, dataset, algo, index):
-    random_ds_name=prefix + "_random_" + dataset
+def get_permuted_folder_name(dataset, algo=None, index=None):
+    random_ds_name="{}_random".format(dataset)
     if algo is not None:
         random_ds_name += "_{}".format(algo)
     if index is not None:
@@ -17,25 +17,29 @@ def get_permutation_name(prefix, dataset, algo, index):
     return random_ds_name
 
 
-def permutation_output_exists(prefix, dataset, algo, index):
+def permutation_solution_exists(dataset, algo, index, output_folder):
 
     return os.path.exists(
-        os.path.join(constants.OUTPUT_GLOBAL_DIR, get_permutation_name(prefix, dataset, algo, index), algo,
+        os.path.join(output_folder, "sol_{}_{}".format(algo, get_permuted_folder_name(dataset, index)), "report",
                      "modules_summary.tsv"))
 
-def create_random_ds(prefix, cur_ds, index=None, algo=None):
-    data_type = "score.tsv"
-    cur_ds = cur_ds[len(prefix)+1:]
-    random_ds_name=get_permutation_name(prefix, cur_ds, algo, index)
-    root_random_dir=os.path.join(constants.DATASETS_DIR, random_ds_name)
-    if os.path.exists(root_random_dir):
-        shutil.rmtree(root_random_dir)
-    os.makedirs(os.path.join(root_random_dir, "data"))
-    os.makedirs(os.path.join(root_random_dir, "output"))
-    os.makedirs(os.path.join(root_random_dir, "cache"))
-    data_file_name = os.path.join(root_random_dir, "data", data_type)
-    data=pd.read_csv(os.path.join(constants.DATASETS_DIR, "{}_{}".format(prefix, cur_ds), 'data', data_type), sep='\t', index_col=0)
+def permutation_dataset_exists(dataset, index, output_folder):
+
+    return os.path.exists(
+        os.path.join(output_folder, get_permuted_folder_name(dataset, index), "data", "scores.tsv"))
+
+def create_random_ds(output_folder,dataset_file, index=None, algo=None):
+    dataset=os.path.splitext(os.path.split(dataset_file)[1])[0]
+    random_ds_name=get_permuted_folder_name(dataset, algo, index)
+    df_scores=pd.read_csv(os.path.join(dataset_file), sep='\t', index_col=0)
     rd=np.random.RandomState(int(index+random.random()*10000))
-    data=pd.DataFrame(data=rd.permutation(data.values), index=data.index, columns=data.columns)
-    data.to_csv(data_file_name, sep='\t', index_label="id")
-    return random_ds_name
+    df_permuted_scores=pd.DataFrame(data=rd.permutation(df_scores.values), index=df_scores.index, columns=df_scores.columns)
+
+    premuted_scores_folder=os.path.join(output_folder, random_ds_name)
+    if os.path.exists(premuted_scores_folder):
+        shutil.rmtree(premuted_scores_folder)
+    os.makedirs(os.path.join(premuted_scores_folder,"data"))
+    os.makedirs(os.path.join(premuted_scores_folder,"output"))
+    permuted_scored_file = os.path.join(premuted_scores_folder, "data",constants.SCORES_FILE_NANE)
+    df_permuted_scores.to_csv(permuted_scored_file, sep='\t', index_label="id")
+    return premuted_scores_folder

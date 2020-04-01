@@ -4,104 +4,78 @@ sys.path.insert(0, '../')
 import os
 import numpy as np
 import argparse
-import pandas as pd
-from pandas.errors import EmptyDataError
+import json
 
-from src import constants
-from src.utils.randomize_data import create_random_ds
-from src.utils.randomize_data import permutation_output_exists
+from src.utils.randomize_data import get_permuted_folder_name
+from src.utils.randomize_data import permutation_solution_exists
 from src.utils.daemon_multiprocessing import MyPool, func_star
-from src.runners.datasets_multithread_runner import run_dataset
+from src.runners.run_algo import run_algo
+import src.constants as constants
 
-def calc_dist(algos, datasets,empirical_th=None):
-    for cur_algo in algos:
-        algos_filter = cur_algo
+def empirical_dist_iteration(dataset_file, rand_idx, algo, network_file, go_folder, permuted_datasets_folder, permuted_solutions_folder,  additional_args):
 
-        df_go = pd.DataFrame(columns=['qval', 'pval'])
-        df_go_pvals = pd.DataFrame()
-        df_go_pvals.index.name="GO id"
-        for cur_ds in datasets:
-            go_results = [os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo, cur_module) for cur_algo in
-                          os.listdir(os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds))
-                          if os.path.isdir(
-                    os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo)) and cur_algo in algos_filter for
-                          cur_module in os.listdir(os.path.join(constants.OUTPUT_GLOBAL_DIR, cur_ds, cur_algo)) if
-                          "separated_modules" in cur_module]
-
-            for cur in go_results:
-                try:
-                    df_go = pd.concat((df_go, pd.read_csv(cur, sep='\t')))
-                    df_go_pvals = pd.concat((df_go_pvals, pd.read_csv(cur, sep='\t').set_index("GO id")['pval']), axis=1)
-                except EmptyDataError:
-                    pass
-        df_go_pvals[df_go_pvals.isna()]=1
-        df_go = df_go[df_go['qval'] < 0.05]
-        if empirical_th:
-            df_go = df_go[df_go['pval'].apply(lambda x:-np.log10(x)) > empirical_th]
-
-        pval = -np.log10(df_go["pval"].values)
-        if np.size(pval) == 0:
-            pval = np.array([0])
-
-        return pval, df_go, df_go_pvals
-
-
-def empirical_dist_iteration(prefix, dataset, cur, algo, score_method, output_folder, network_file_name="dip.sif"):
-
-    print("starting iteration: {}, {}, {}".format(prefix, dataset, cur))
-    random_ds = create_random_ds(prefix, "{}_{}".format(prefix, dataset), cur, algo)
-    permuted_network_file_name = network_file_name
-    run_dataset(random_ds, score_method=score_method,
-                algos=[algo], network_file_name=permuted_network_file_name, output_folder=output_folder)
-    cur_pval, df_terms, df_pval_terms = calc_dist([algo], [random_ds.format(prefix, dataset)])
-    print("done iteration: {}, {}, {}".format(prefix, dataset, cur))
-    return cur_pval, df_pval_terms
-
+    print("starting generate permuted solution: {}, {}, {}".format(dataset_file, algo, rand_idx))
+    dataset=os.path.splitext(os.path.split(dataset_file)[1])[0]
+    permuted_folder=get_permuted_folder_name(dataset, index=rand_idx)
+    output_folder=os.path.join(permuted_solutions_folder, "sol_{}_{}".format(algo,permuted_folder))
+    try:
+        os.makedirs(output_folder)
+    except FileExistsError:
+        pass
+    run_algo(os.path.join(os.path.join(permuted_datasets_folder, permuted_folder), "data", constants.SCORES_FILE_NANE), algo=algo,
+             network_file_name=network_file, go_folder=go_folder, output_folder=output_folder, **additional_args)
+    print("done generating permuted solution: {}, {}, {}".format(dataset_file, algo, rand_idx))
 
 
 def main():
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset', dest='dataset', default="SOC")
-    parser.add_argument('--omic_type', dest='omic_type', default="PASCAL_SUM")
-    parser.add_argument('--algo', dest='algo', default="jactivemodules_greedy")
-    parser.add_argument('--network', dest='network', default="dip.sif")
-    parser.add_argument('--output_folder', dest='output_folder', default=None)
+    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data/emp_test/datasets/brca.tsv")
+    parser.add_argument('--algo', dest='algo', default="DOMINO")
+    parser.add_argument('--network_file', dest='network_file', help='/path/to/network_file', default="/media/hag007/Data/emp_test/networks/dip.sif")
+    parser.add_argument('--go_folder', dest='go_folder', default="/media/hag007/Data/emp_test/go")
+    parser.add_argument('--permuted_datasets_folder', dest='permuted_datasets_folder', default="/media/hag007/Data/emp_test/permuted_datasets")
+    parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default="/media/hag007/Data/emp_test/permuted_solutions")
     parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=0)
-    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=100)
-    parser.add_argument('--pf', help="parallelization_factor", dest='pf', default=10)
+    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=5)
+    parser.add_argument('--pf', help="parallelization_factor", dest='pf', default=3)
     parser.add_argument('--override_permutations', help="takes max or all samples", dest='override_permutations', default="false")
-
+    parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default='{"slices_file": "/media/hag007/Data1/emp_test/networks/dip_ng_modularity_components.txt", "modules_threshold": 0.05, "slices_threshold" : 0.3}')
     args = parser.parse_args()
 
-    dataset=args.dataset
+    dataset_file=args.dataset_file
     algo=args.algo
-    omic_type = args.omic_type
-    network_file_name = args.network
-    output_folder = args.output_folder
-    if output_folder is None:
-        output_folder=os.path.join(os.path.split(dataset)[0],"output")
+    network_file = args.network_file
+    permuted_datasets_folder = args.permuted_datasets_folder
+    permuted_solutions_folder = args.permuted_solutions_folder
+    go_folder = args.go_folder
+    additional_args=json.loads(args.additional_args)
 
-    parallelization_factor = int(args.pf)
+    parallelization_factor =  int(args.pf)
     n_start=args.n_start
     n_end=args.n_end
     override_permutations=args.override_permutations.lower()=="true"
 
-    for dataset in dataset:
+    constants.GO_DIR=go_folder
 
-        score_method = constants.PREDEFINED_SCORE
+    dataset_name = os.path.splitext(os.path.split(dataset_file)[1])[0]
 
-        for algo in algo:
-            break_loop=False
-            while not break_loop:
-                try:
-                    p = MyPool(parallelization_factor)
-                    params=[ [empirical_dist_iteration, [omic_type, dataset, x, algo, score_method, output_folder, network_file_name]] for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_output_exists(omic_type, dataset, algo, x)]
-                    p.map(func_star, params)
-                    break_loop=True
+    break_loop=False
+    while not break_loop:
+        try:
 
-                except (MemoryError, OSError) as e:
-                    p.close()
-                    pass
+            # [empirical_dist_iteration(dataset_file, x, algo, network_file, go_folder, permuted_datasets_folder, permuted_solutions_folder, additional_args) for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_solution_exists(dataset_name, algo, x, permuted_solutions_folder)]
+
+            p = MyPool(parallelization_factor)
+            params=[ [empirical_dist_iteration, [dataset_file, x, algo, network_file, go_folder, permuted_datasets_folder, permuted_solutions_folder, additional_args]] for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_solution_exists(dataset_name, algo, x, permuted_solutions_folder)]
+            p.map(func_star, params)
+            break_loop=True
+
+        except (MemoryError, OSError) as e:
+            # p.close()
+            print(e)
+            raise
+            # break_loop=True
+            # pass
 
 
 

@@ -116,7 +116,7 @@ class _WrHierPrt(object):
         if self.include_only and goid not in self.include_only:
             return
         nrp = self.concise_prt and goid in self.gos_printed
-        if self.vertices.has_key(goid):
+        if goid in self.vertices:
             self.vertices[goid]["weight"] += 1
             self.vertices[goid]["depth"].append(depth)
         else:
@@ -135,8 +135,8 @@ class _WrHierPrt(object):
         if self.max_indent is not None and depth > self.max_indent:
             return
         for child in ntobj.children:
-            if self.go2geneids.has_key(child.id) or True:
-                if self.edges.has_key("{}={}".format(goid, child.id)):
+            if child.id in self.go2geneids or True:
+                if "{}={}".format(goid, child.id) in self.edges:
                     self.edges["{}={}".format(goid, child.id)]["weight"] += 1
                 else:
                     self.edges["{}={}".format(goid, child.id)] = {"weight" : 0}
@@ -203,11 +203,11 @@ def write_hier_all(gosubdag, out, root_term):
 #################################################################
 # Sub-routines to tests
 #################################################################
-def extract_hier_all(gosubdag, out, root_term, go2geneids):
+def extract_hier_all(gosubdag, root_term, go2geneids):
     """write_hier.py: Prints the entire mini GO hierarchy, with counts of children."""
     # out.write('\nTEST EXTRACTION: Print all hierarchies:\n')
     objwr = WrHierGO(gosubdag,  go2geneids=go2geneids)
-    obj = objwr.ext_hier_down(root_term, out)
+    obj = objwr.ext_hier_down(root_term)
     return (obj.vertices, obj.edges)
 
 
@@ -257,8 +257,16 @@ def fetch_go_hierarcy():
                       os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME))
 
     print("Loading gene-GO associations")
+
     go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True)
     geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606])
+
+    ## backward compatibility to goatools python 2.7##
+    # all_go_ids=set().union(*list(geneids2go.values()))
+    # for cur_id in all_go_ids:
+    #     go2geneids[cur_id]=set()
+    ############################
+
 
     return (go2geneids, geneids2go)
 
@@ -275,10 +283,14 @@ def build_hierarcy(roots=['GO:0008150']): #  0008150 0005575 0003674
     godag = GODag(dag_fin, optional_attrs=['relationship'])
     gosubdag = GoSubDag(godag.keys(), godag)
     toc = timeit.default_timer()
-    out = open(os.path.join(constants.BASE_PROFILE, "output", "go_hierarcy.txt"), "w+") # sys.stdout
     dict_result = {}
     for cur_term in roots:
-        vertices, edges = extract_hier_all(gosubdag, out, cur_term ,go2geneids)
+        vertices, edges = extract_hier_all(gosubdag, cur_term ,go2geneids)
+
+        # all_go_ids=set(vertices.keys())
+        # for cur_id in all_go_ids:
+        #     if not cur_id in go2geneids:
+        #         go2geneids[cur_id]=set()
 
         msg = "Elapsed HMS: {}\n\n".format(str(datetime.timedelta(seconds=(toc-tic))))
         sys.stdout.write(msg)

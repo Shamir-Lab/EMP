@@ -4,14 +4,11 @@ import networkx as nx
 from networkx.algorithms.components import connected_components
 from networkx.algorithms.community.centrality import girvan_newman
 from networkx.algorithms.community.quality import modularity
-import os
-from src.core.network_builder import build_network
+from src.implementations.network_builder import build_network
 
 def create_slices(network_file, output_file_name):
     G = build_network(network_file)
     G.remove_nodes_from(list(nx.isolates(G)))
-    print("after removing orphans - number of edges: {}, nodes: {}".format(len(G.edges),
-                                                                                    len(G.nodes)))
 
     reached_optimal_modularity = False
     optimized_connected_components = girvan_newman(G)
