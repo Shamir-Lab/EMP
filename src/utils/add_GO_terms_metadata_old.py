@@ -66,9 +66,7 @@ def get_all_genes_for_term(vertices, cur_root, term, in_subtree):
         try:
             all_genes.update(go2geneids[cur_root])
         except Exception:
-            # print(e)
-            pass
-            # print("cur_root : {} was not found".format(cur_root))
+            print("cur_root : {} was not found".format(cur_root))
 
     for cur_child in vertices[cur_root]["obj"].children:
         all_genes.update(get_all_genes_for_term(vertices, cur_child.id, term, in_subtree))
@@ -114,55 +112,52 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
     HG_CUTOFF = -np.log10(np.sort(max_genes_pvals))[max_true_counter - 1] if max_true_counter > 0 else 0
     print("HG cutoff: {}".format(HG_CUTOFF))
 
-    df_filtered_in = df.loc[np.logical_and.reduce([df.loc[:, "n_genes"].values > 5, df.loc[:, "n_genes"].values < 500,
-                                                   df.loc[:, "hg_pval"].apply(lambda row: np.any(
+    df_filtered_in = df.loc[np.logical_and.reduce([df["n_genes"].values > 5, df["n_genes"].values < 500,
+                                                   df["hg_pval"].apply(lambda row: np.any(
                                                        np.array(row[1:-1].split(', ') if type(row) == str else [row],
                                                                 dtype=np.float) >= HG_CUTOFF))]), :]
-    df_filtered_out = df.loc[~np.logical_and.reduce([df.loc[:, "n_genes"].values > 5, df.loc[:, "n_genes"].values < 500,
-                                                     df.loc[:, "hg_pval"].apply(lambda row: np.any(
+    df_filtered_out = df.loc[~np.logical_and.reduce([df["n_genes"].values > 5, df["n_genes"].values < 500,
+                                                     df["hg_pval"].apply(lambda row: np.any(
                                                          np.array(row[1:-1].split(', ') if type(row) == str else [row],
                                                                   dtype=np.float) >= HG_CUTOFF))]), :]
 
-    # if df_filtered_in.shape[0] != 0:
-    #
-    #     df_filtered_in.loc[:,"index"] = df_filtered_in.index.values
-    #     df_filtered_in.loc[:,"emp_pval"] = df_filtered_in.apply(lambda row: calc_empirical_pval(row, n_permutations), axis=1)
-    #     df_filtered_in.loc[:,"emp_pval_max"] = df_filtered_in.loc[:,"emp_pval"].apply(
-    #         lambda a: a if type(a) != str else np.min(np.array(a[1:-1].split(", "), dtype=np.float32)))
-    #
-    #     pvals_corrected = [[x] if type(x) != str else np.array(x[1:-1].split(", ")).astype(np.float) for x in
-    #                        df_filtered_in.loc[:, "emp_pval"]]
-    #
-    #     max_pvals_corrected = reduce(lambda a, x: np.append(a, np.min(x)), pvals_corrected, np.array([]))
-    #
-    #     print("# of corrected pvals: {}".format(max_pvals_corrected.shape[0]))
-    #
-    #     pvals_corrected = reduce(lambda a, x: np.append(a, x), pvals_corrected, np.array([]))
-    #     fdr_results = fdrcorrection0(max_pvals_corrected, alpha=0.05, method='indep', is_sorted=False)
-    #     max_true_counter = len([cur for cur in fdr_results[0] if cur == True])
-    #     emp_cutoff = np.sort(np.sort(max_pvals_corrected))[max_true_counter - 1] if max_true_counter > 0 else 0
-    #     print("number of true hypothesis: {} (emp cutoff: {}, n={})".format(max_true_counter, emp_cutoff, len(fdr_results[0])))
-    #     if n_modules > 1:
-    #         df_filtered_in.loc[:,"passed_fdr"] = [str(a) for a in (pvals_corrected <= emp_cutoff).reshape(-1, n_modules)]
-    #
-    #     else:
-    #         df_filtered_in.loc[:,"passed_fdr"] = pvals_corrected <= emp_cutoff
-    #         df_filtered_in.loc[:,"passed_fdr"] = df_filtered_in["passed_fdr"].apply(lambda a: str([a]))
-    #
-    #     df_filtered_in.loc[:,"emp_rank"] = df_filtered_in["emp_pval_max"].rank(ascending=1)
-    #     df_filtered_in.loc[:,"hg_rank"] = df_filtered_in["hg_pval_max"].rank(ascending=0)
-    #
-    #     df_filtered_in = df_filtered_in.sort_values(by=["emp_rank", "hg_rank"])
-    #
-    # else:
-    #     df_filtered_in = pd.DataFrame(columns=['emp_pval', 'hg_rank', 'emp_rank', 'passed_fdr'])
-
     if df_filtered_in.shape[0] != 0:
-        df_filtered_in.loc[:,"hg_rank"] = df_filtered_in["hg_pval_max"].rank(ascending=0)
+
+        df_filtered_in["index"] = df_filtered_in.index.values
+        df_filtered_in["emp_pval"] = df_filtered_in.apply(lambda row: calc_empirical_pval(row, n_permutations), axis=1)
+        df_filtered_in["emp_pval_max"] = df_filtered_in["emp_pval"].apply(
+            lambda a: a if type(a) != str else np.min(np.array(a[1:-1].split(", "), dtype=np.float32)))
+
+        pvals_corrected = [[x] if type(x) != str else np.array(x[1:-1].split(", ")).astype(np.float) for x in
+                           df_filtered_in["emp_pval"]]
+
+        max_pvals_corrected = reduce(lambda a, x: np.append(a, np.min(x)), pvals_corrected, np.array([]))
+
+        print("n currected pvals: {}".format(max_pvals_corrected.shape[0]))
+
+        pvals_corrected = reduce(lambda a, x: np.append(a, x), pvals_corrected, np.array([]))
+        fdr_results = fdrcorrection0(max_pvals_corrected, alpha=0.05, method='indep', is_sorted=False)
+        max_true_counter = len([cur for cur in fdr_results[0] if cur == True])
+        emp_cutoff = np.sort(np.sort(max_pvals_corrected))[max_true_counter - 1] if max_true_counter > 0 else 0
+        print(": {} (emp cutoff: {}, n={})".format(max_true_counter, emp_cutoff, len(fdr_results[0])))
+        print("emp true hypothesis: {}".format(
+            np.sum(np.min(pvals_corrected.reshape(-1, n_modules), axis=1) <= emp_cutoff)))
+        if n_modules > 1:
+            df_filtered_in["passed_fdr"] = [str(a) for a in (pvals_corrected <= emp_cutoff).reshape(-1, n_modules)]
+
+        else:
+            df_filtered_in["passed_fdr"] = pvals_corrected <= emp_cutoff
+            df_filtered_in["passed_fdr"] = df_filtered_in["passed_fdr"].apply(lambda a: str([a]))
+
+        df_filtered_in["emp_rank"] = df_filtered_in["emp_pval_max"].rank(ascending=1)
+        df_filtered_in["hg_rank"] = df_filtered_in["hg_pval_max"].rank(ascending=0)
+
+        df_filtered_in = df_filtered_in.sort_values(by=["emp_rank", "hg_rank"])
 
     else:
-        df_filtered_in = pd.DataFrame(columns=['hg_rank']) # 'emp_pval', 'hg_rank', 'emp_rank', 'passed_fdr'
+        df_filtered_in = pd.DataFrame(columns=['emp_pval', 'hg_rank', 'emp_rank', 'passed_fdr'])
 
     df_all = pd.concat((df_filtered_in, df_filtered_out), axis=0)
+    print(df_filtered_in.columns, df_all.columns)
 
     return df_all
