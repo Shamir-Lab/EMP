@@ -4,8 +4,9 @@ import os
 from multiprocessing import Process
 from src import constants
 from src.runners import domino_runner
+from src.runners import netbox_runner
 
-ALGO_BY_NAMES = {"DOMINO":domino_runner.main}
+ALGO_BY_NAMES = {"DOMINO":domino_runner.main, "netbox":netbox_runner.main}
 
 def add_algo_runner(k,v):
     ALGO_BY_NAMES[k]=v

@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '../')
+sys.path.insert(0, '../..')
 
 import argparse
 
@@ -22,7 +22,7 @@ def get_best_module_sig_score(report_folder, shared_list):
         df_go_pvals = pd.DataFrame()
         df_go_pvals.index.name="GO id"
 
-        print("fetch permutation {}".format(report_folder))
+        # print("@fetch permutation {}".format(report_folder))
         n_modules=len(pd.read_csv(os.path.join(report_folder, "modules_summary.tsv"), sep='\t').index)
         go_results = [os.path.join(report_folder, cur_module) for cur_module in os.listdir(report_folder) if
                       "separated_modules" in cur_module and int(cur_module.split("_")[1]) < n_modules]
@@ -43,7 +43,7 @@ def get_best_module_sig_score(report_folder, shared_list):
 
         if shared_list is not None:
             shared_list.append(df_go_pvals)
-            print("done aggregate {} permutations".format(len(shared_list)))
+            print("done aggregate {} permutations".format(len(shared_list)), end="@\n")
 
         return df_go_pvals
 
@@ -93,10 +93,12 @@ def main():
     parser = argparse.ArgumentParser(description='args')
     parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data/emp_test/datasets/brca.tsv")
     parser.add_argument('--algo', dest='algo', default="DOMINO")
-    parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default="/media/hag007/Data/emp_test/output")
-    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data/emp_test/output")
     parser.add_argument('--go_folder', dest='go_folder', default="/media/hag007/Data1/emp_test/go")
+    parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default="/media/hag007/Data/emp_test/output")
     parser.add_argument('--true_solution_folder', dest='true_solution_folder', default="/media/hag007/Data/emp_test/true_solutions")
+    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data/emp_test/output")
+
+
     parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=0)
     parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=5)
     parser.add_argument('--pf', help="parallelization_factor", dest='pf', default=5)
@@ -121,9 +123,7 @@ def main():
     for cur_idx in range(n_start, n_end):
         permuted_folder=get_permuted_folder_name(os.path.splitext(os.path.split(dataset_file)[1])[0], cur_idx)
         sol_output_folder = os.path.join(permuted_solutions_folder, "sol_{}_{}".format(algo,permuted_folder), "report")
-        print (permuted_solutions_folder)
         params.append([get_best_module_sig_score, [sol_output_folder, l_permutations_top_pvals]])
-        print(n_end)
     p.map(func_star, params)
 
     df_all_terms = pd.concat(list(l_permutations_top_pvals), axis=1)
@@ -137,12 +137,11 @@ def main():
     df_real_pvals_as_list = df_real_pvals.apply(lambda x: str(list(x)), axis=1).to_frame()
     df_real_pvals_as_list.index = df_real_pvals.index
 
-    print("total # real terms: {}".format(len(df_real_pvals.index)))
     df_results=df_all_terms.apply(lambda row : str(list(-np.log10(row.values.astype(np.float)))), axis=1).to_frame()
     df_results.columns = ['dist_n_samples']
     missing_indices=set(df_real_pvals.index).difference(df_results.index)
-    print("missing_indices: {}".format(len(missing_indices)))
-    print("existing_indices: {}".format(len(df_results.index)))
+    # print("missing_indices: {}".format(len(missing_indices)))
+    # print("existing_indices: {}".format(len(df_results.index)))
 
     for idx in missing_indices:
         df_results.loc[idx, "dist_n_samples"]=str([0 for a in np.arange(n_start, n_end)])
@@ -152,7 +151,6 @@ def main():
                                    index=df_real_pvals.index)
     df_results.to_csv(os.path.join(report_folder,"emp_diff_modules_{}_{}.tsv".format(dataset_name, algo)),  sep='\t', index_label="GO id")
 
-    print("permutation shape: {}".format(df_all_terms))
 
 if __name__ == "__main__":
     main()
