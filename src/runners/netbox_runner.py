@@ -24,7 +24,7 @@ from src.utils.scripts import format_script
 from src.utils.network import get_network_genes
 
 ALGO_NAME = "netbox"
-ALGO_DIR = os.path.join("/media/hag007/Data1/repos/bnetworks_alg", ALGO_NAME)
+ALGO_DIR = os.path.join("/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg", ALGO_NAME)
 
 import random
 
@@ -72,7 +72,7 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwarg
         pass
 
     script_file_name=format_script(os.path.join(constants.dir_path, "src/sh", script_name),
-                  NETBOX_HOME=dest_algo_dir, BASE_FOLDER="/media/hag007/Data1/emp_test", CONFIG_FILE_NAME=conf_file_name)
+                  NETBOX_HOME=dest_algo_dir, BASE_FOLDER="/specific/netapp5/gaga/hagailevi/emp_test", CONFIG_FILE_NAME=conf_file_name)
     print(subprocess.Popen("bash {}".format(script_file_name), shell=True,
                            stdout=subprocess.PIPE, cwd=dest_algo_dir).stdout.read())
     os.remove(script_file_name)
