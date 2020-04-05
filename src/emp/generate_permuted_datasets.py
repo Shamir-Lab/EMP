@@ -12,9 +12,9 @@ from src.utils.daemon_multiprocessing import MyPool, func_star
 
 def empirical_dist_iteration(dataset_file, rand_idx, algo, output_folder):
 
-    print("starting generate permuted datasets: {}, {}".format(dataset_file, algo, rand_idx))
+    # print("starting generate permuted datasets: {}, {}@".format(dataset_file, algo, rand_idx))
     create_random_ds(output_folder, dataset_file, rand_idx)
-    print("done generating permuted dataset: {}, {}, {}".format(dataset_file, algo, rand_idx))
+    print("done generating permuted dataset: {}, {}, {}@".format(dataset_file, algo, rand_idx))
 
 
 def main():

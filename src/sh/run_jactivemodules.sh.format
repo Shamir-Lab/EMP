@@ -1,0 +1,18 @@
+is_greedy={IS_GREEDY}
+algo_dir={ALGO_DIR}
+num_of_modules={NUM_OF_MODULES}
+overlap_threshold={OVERLAP_THRESHOLD}
+network_file_name={NETWORK_FILE_NAME}
+score_file_name={SCORE_FILE_NAME}
+output_file={OUTPUT_FILE}
+
+
+echo {SCORE_FILE_NAME}
+java -jar $algo_dir/jactivemodules.jar \
+                                 $network_file_name \
+                                 $score_file_name \
+                                 $is_greedy \
+                                 $num_of_modules \
+                                 $overlap_threshold \
+                                 $output_file
+

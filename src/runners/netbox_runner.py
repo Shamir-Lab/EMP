@@ -89,10 +89,8 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwarg
 
 if __name__ == "__main__":
 
-    ds = ["GE_APO"]
-    for cur in ds:
-        constants.update_dirs(DATASET_NAME_u=cur)  # Type_2_Diabetes Crohns_Disease
-        main(dataset_name=constants.DATASET_NAME, score_method=constants.DEG_EDGER)
+
+    main(dataset_file_name="/media/hag007/Data1/emp_test/original_datasets/tnfa.tsv", network_file_name="/media/hag007/Data1/emp_test/networks/dip.sif", go_folder="/media/hag007/Data1/emp_test/networks/dip.sif", output_folder="/media/hag007/Data1/emp_test/true_solutions/")
 
 
 
