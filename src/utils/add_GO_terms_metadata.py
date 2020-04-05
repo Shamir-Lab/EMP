@@ -59,8 +59,8 @@ def calc_empirical_pval(row, n_permutation):
 
 def get_all_genes_for_term(vertices, cur_root, term, in_subtree):
     if term in terms_to_genes:
-        return terms_to_genes[term]
-    in_subtree = in_subtree or term == cur_root
+        return terms_to_genes[cur_root]
+
     all_genes = set()
     if in_subtree:
         try:
@@ -73,7 +73,7 @@ def get_all_genes_for_term(vertices, cur_root, term, in_subtree):
     for cur_child in vertices[cur_root]["obj"].children:
         all_genes.update(get_all_genes_for_term(vertices, cur_child.id, term, in_subtree))
 
-    terms_to_genes[term] = all_genes
+    terms_to_genes[cur_root] = all_genes
     return all_genes
 
 

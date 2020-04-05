@@ -12,9 +12,9 @@ from src.utils.daemon_multiprocessing import MyPool, func_star
 
 def empirical_dist_iteration(dataset_file, rand_idx, algo, output_folder):
 
-    print("starting generate permuted datasets: {}, {}".format(dataset_file, algo, rand_idx))
+#     print("starting generate permuted datasets: {}, {}@".format(dataset_file, algo, rand_idx))
     create_random_ds(output_folder, dataset_file, rand_idx)
-    print("done generating permuted dataset: {}, {}, {}".format(dataset_file, algo, rand_idx))
+    print("done generating permuted dataset: {}, {}@".format(algo, rand_idx), flush=False)
 
 
 def main():
@@ -43,8 +43,13 @@ def main():
     break_loop=False
     while not break_loop:
         try:
-            # [ empirical_dist_iteration(dataset_file, x, algo, permuted_datasets_folder) for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_output_exists(dataset_file, algo, x, permuted_datasets_folder)]
+            
+            # for x in np.arange(int(n_start), int(n_end)):
+            #     print(permutation_dataset_exists(dataset_name, x, permuted_datasets_folder))
+                
+            # [ empirical_dist_iteration(dataset_file, x, algo, permuted_datasets_folder) for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_dataset_exists(dataset_name, x, permuted_datasets_folder)]
             # empirical_dist_iteration(dataset_file, x, algo, output_folder)
+
             p = MyPool(parallelization_factor)
             params=[ [empirical_dist_iteration, [dataset_file, x, algo, permuted_datasets_folder]] for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_dataset_exists(dataset_name, x, permuted_datasets_folder)]
             p.map(func_star, params)

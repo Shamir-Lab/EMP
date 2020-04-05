@@ -24,7 +24,7 @@ def permutation_solution_exists(dataset, algo, index, output_folder):
                      "modules_summary.tsv"))
 
 def permutation_dataset_exists(dataset, index, output_folder):
-
+    
     return os.path.exists(
         os.path.join(output_folder, get_permuted_folder_name(dataset, index), "data", "scores.tsv"))
 
