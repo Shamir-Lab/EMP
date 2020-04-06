@@ -1,6 +1,7 @@
 /python
 /.idea
 /build
+/config/env_conf.json
 /dist
 /*.egg-info/
 *.pyc

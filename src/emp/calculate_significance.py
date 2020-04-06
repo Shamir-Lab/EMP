@@ -1,9 +1,10 @@
 import sys
 sys.path.insert(0, '../..')
 
+import src.constants as constants
+
 from functools import reduce
 import argparse
-from src import constants
 import os
 import pandas as pd
 import numpy as np
@@ -129,11 +130,11 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
 def main():
 
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data1/emp_test/datasets/scz.tsv")
-    parser.add_argument('--algo', dest='algo', default="DOMINO")
-    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data1/emp_test/report")
-    parser.add_argument('--n_total_samples', help="n_total_samples", dest='n_total_samples', default=10)
-    parser.add_argument('--n_dist_samples', help="n_dist_samples", dest='n_dist_samples', default=10)
+    parser.add_argument('--dataset_file', dest='dataset_file', default=constants.config_json["dataset_file"])
+    parser.add_argument('--algo', dest='algo', default=constants.config_json["algo"])
+    parser.add_argument('--report_folder', dest='report_folder', default=constants.config_json["report_folder"])
+    parser.add_argument('--n_total_samples', help="n_total_samples", dest='n_total_samples', default=constants.config_json["n_total_samples"])
+    parser.add_argument('--n_dist_samples', help="n_dist_samples", dest='n_dist_samples', default=constants.config_json["n_dist_samples"])
 
 
     args = parser.parse_args()
@@ -176,4 +177,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
