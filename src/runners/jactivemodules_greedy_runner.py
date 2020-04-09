@@ -23,7 +23,7 @@ import src.utils.server as server
 from src.utils.network import output_modules
 
 ALGO_NAME = "jactivemodules"
-ALGO_DIR = "/media/hag007/Data1/repos/bnetworks_alg/jactivemodules"
+ALGO_DIR = "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/jactivemodules"
 
 
 def init_params(search_method, network_file_name, output_folder):
@@ -44,11 +44,12 @@ def extract_modules_and_bg(bg_genes, results_file_name, modules_genes_file_name,
 
 
 def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
+    print("start running jactivemodules_greedy")
     search_method = "greedy"
     results_file_name, bg_genes = init_params(search_method, network_file_name, output_folder)
 
 
-    script_file_name=format_script(os.path.join(constants.dir_path, "src/sh", "run_{}.sh".format(ALGO_NAME)), BASE_FOLDER="/media/hag007/Data1/emp_test",
+    script_file_name=format_script(os.path.join(constants.dir_path, "src/sh", "run_{}.sh".format(ALGO_NAME)), BASE_FOLDER="/specific/netapp5/gaga/hagailevi/emp_test",
                   ALGO_DIR=ALGO_DIR, NETWORK_FILE_NAME=network_file_name, SCORE_FILE_NAME=dataset_file_name,
                   IS_GREEDY=str(search_method == "greedy"), OUTPUT_FILE=results_file_name, NUM_OF_MODULES=50, OVERLAP_THRESHOLD=0)
     print("running :{}".format(script_file_name))

@@ -9,16 +9,14 @@ pandas2ri.activate()
 
 
 def run_rscript(script, output_vars = ["result"], **kwargs):
-    """Call edgeR in R and organize the resulting differential expressed genes."""
-
-    for k, v in kwargs.iteritems():
+    
+    for k, v in kwargs.items():
         robjects.globalenv[k.replace("_",".")] = v
-
     results = {}
     robjects.r(script)
     for cur_var in output_vars:
         results[cur_var] = robjects.r[cur_var.replace("_",".")]
-
     return results
+
 
 
