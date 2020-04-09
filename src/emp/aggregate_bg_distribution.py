@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import multiprocessing
 import os
+import src.constants as constants
 
 from pandas.errors import EmptyDataError
 
@@ -91,17 +92,18 @@ def get_all_modules_sig_scores(report_folder, shared_list=None):
 def main():
 
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data/emp_test/datasets/brca.tsv")
-    parser.add_argument('--algo', dest='algo', default="DOMINO")
-    parser.add_argument('--go_folder', dest='go_folder', default="/media/hag007/Data1/emp_test/go")
-    parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default="/media/hag007/Data/emp_test/output")
-    parser.add_argument('--true_solution_folder', dest='true_solution_folder', default="/media/hag007/Data/emp_test/true_solutions")
-    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data/emp_test/output")
+    parser.add_argument('--dataset_file', dest='dataset_file', default=constants.config_json["dataset_file"])
+    parser.add_argument('--algo', dest='algo', default=constants.config_json["algo"])
+    parser.add_argument('--network_file', dest='network_file', default=constants.config_json["network_file"])
+    parser.add_argument('--go_folder', dest='go_folder', default=constants.config_json["go_folder"])
+    parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default=constants.config_json["permuted_solutions_folder"])
+    parser.add_argument('--true_solution_folder', dest='true_solution_folder', default=constants.config_json["true_solution_folder"])
+    parser.add_argument('--report_folder', dest='report_folder', default=constants.config_json["report_folder"])
 
 
-    parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=0)
-    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=5)
-    parser.add_argument('--pf', help="parallelization_factor", dest='pf', default=5)
+    parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=constants.config_json["n_start"])
+    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=constants.config_json["n_end"])
+    parser.add_argument('--pf', dest='pf', help="parallelization factor", default=constants.config_json["pf"])
 
     args = parser.parse_args()
 

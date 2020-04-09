@@ -4,17 +4,17 @@ sys.path.insert(0, '../..')
 
 import pandas as pd
 import os
-from src import constants
+import src.constants as constants
 import argparse
 
 def main():
 
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data1/emp_test/datasets/scz.tsv")
-    parser.add_argument('--algo', dest='algo', default="DOMINO")
-    parser.add_argument('--go_folder', dest='go_folder', default="/media/hag007/Data1/emp_test/go")
-    parser.add_argument('--report_folder', dest='report_folder', default="/media/hag007/Data1/emp_test/report")
-    parser.add_argument('--n_permutations', dest='n_permutations', default=10 )
+    parser.add_argument('--dataset_file', dest='dataset_file', default=constants.config_json["dataset_file"])
+    parser.add_argument('--algo', dest='algo', default=constants.config_json["algo"])
+    parser.add_argument('--go_folder', dest='go_folder', default=constants.config_json["go_folder"])
+    parser.add_argument('--report_folder', dest='report_folder', default=constants.config_json["report_folder"])
+    parser.add_argument('--n_permutations', dest='n_permutations', default=constants.config_json["n_permutations"])
 
     args = parser.parse_args()
 
