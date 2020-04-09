@@ -12,6 +12,7 @@ from src import constants
 from src.utils import go_hierarcies
 from src.utils.ensembl2entrez import entrez2ensembl_convertor
 
+# constants.GO_DIR="/media/hag007/Data/bnet/GO"
 dict_result, go2geneids, geneids2go, entrez2ensembl = go_hierarcies.build_hierarcy(
     roots=['GO:0008150'])
 vertices = list(dict_result.values())[0]['vertices']
@@ -168,3 +169,7 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
     df_all = pd.concat((df_filtered_in, df_filtered_out), axis=0)
 
     return df_all
+
+# if __name__=='__main__':
+#     get_all_genes_for_term(vertices, "GO:0008150", "GO:0008150", True)
+#     x=1

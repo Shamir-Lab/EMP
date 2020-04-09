@@ -1,6 +1,8 @@
 import sys
 sys.path.insert(0, '../..')
 
+import src.constants as constants
+
 import os
 import numpy as np
 import argparse
@@ -19,13 +21,13 @@ def empirical_dist_iteration(dataset_file, rand_idx, algo, output_folder):
 
 def main():
     parser = argparse.ArgumentParser(description='args')
-    parser.add_argument('--dataset_file', dest='dataset_file', help='/path/to/dataset_file', default="/media/hag007/Data1/emp_test/original_datasets/scz.tsv")
-    parser.add_argument('--algo', dest='algo', default="DOMINO")
-    parser.add_argument('--permuted_datasets_folder', dest='permuted_datasets_folder', default="/media/hag007/Data1/emp_test/permuted_datasets")
-    parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=0)
-    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=5100)
-    parser.add_argument('--pf', help="parallelization_factor", dest='pf', default=10)
-    parser.add_argument('--override_permutations', help="takes max or all samples", dest='override_permutations', default="false")
+    parser.add_argument('--dataset_file', dest='dataset_file', default=constants.config_json["dataset_file"])
+    parser.add_argument('--algo', dest='algo', default=constants.config_json["algo"])
+    parser.add_argument('--permuted_datasets_folder', dest='permuted_datasets_folder', default=constants.config_json["permuted_datasets_folder"])
+    parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=constants.config_json["n_start"])
+    parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=constants.config_json["n_end"])
+    parser.add_argument('--pf', dest='pf', help="parallelization factor", default=constants.config_json["pf"])
+    parser.add_argument('--override_permutations', help="override_permutations", dest='override_permutations', default=constants.config_json["override_permutations"])
 
     args = parser.parse_args()
 
