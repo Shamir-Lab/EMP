@@ -22,6 +22,7 @@ def empirical_dist_iteration(dataset_file, rand_idx, algo, network_file, go_fold
         os.makedirs(output_folder)
     except FileExistsError:
         pass
+    
     run_algo(os.path.join(os.path.join(permuted_datasets_folder, permuted_folder), "data", constants.SCORES_FILE_NANE), algo=algo,
              network_file_name=network_file, go_folder=go_folder, output_folder=output_folder, **additional_args)
     print("done generating permuted solution: {}, {}, {}".format(dataset_file, algo, rand_idx))
@@ -84,5 +85,6 @@ def main():
 if __name__ == "__main__":
     main()
            
+
 
 

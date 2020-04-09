@@ -10,6 +10,9 @@ sys.path.insert(0, '../..')
 
 import os
 import time
+import shutil
+# import rpy2.robjects.numpy2ri  as numpy2ri
+# numpy2ri.activate()
 
 from rpy2.robjects import pandas2ri
 pandas2ri.activate()
@@ -18,7 +21,6 @@ pandas2ri.activate()
 
 import src.constants as constants
 
-from src.utils.network import get_network_genes
 from src.utils.r_runner import run_rscript
 from src.utils.network import remove_subgraph_by_nodes
 from src.utils.network import build_all_reports
@@ -34,20 +36,23 @@ def run_bionet(deg_file_name, network_file_name, fdr=0.05):
     return run_rscript(script=script, output_vars = ["module_genes", "bg_genes"], network_file_name=network_file_name, deg_file_name=deg_file_name, fdr=fdr)
 
 
-def init_params(network_file_name, omitted_genes = [], ts=str(time.time())):
-    new_network_file_name=remove_subgraph_by_nodes(omitted_genes, network_file_name, ts=ts)
-    bg_genes=get_network_genes(network_file_name)
+def init_specific_params(network_file_name, omitted_genes = [], ts=str(time.time())):
+    return remove_subgraph_by_nodes(omitted_genes, network_file_name, ts=ts)
 
-    return new_network_file_name, bg_genes
 
 def get_module(network_file_name, score_file_name, omitted_genes, ts=str(time.time()),fdr=0.05):
-    network_file_name, bg_genes = init_params(network_file_name=network_file_name, omitted_genes=omitted_genes)
+    network_file_name = init_specific_params(network_file_name=network_file_name, omitted_genes=omitted_genes)
     results = run_bionet(score_file_name, network_file_name,fdr)
     module_genes = np.array(results["module_genes"])
 
+    bg_genes = results["bg_genes"]
+    # open(os.path.join(constants.OUTPUT_DIR, "{}_module_genes_{}.txt".format(ALGO_NAME, ts)), "w+").write(
+    #     "\n".join(module_genes))
+    # open(os.path.join(constants.OUTPUT_DIR, "{}_bg_genes_{}.txt".format(ALGO_NAME, ts)), "w+").write(
+    #     "\n".join(bg_genes))
 
-    sys.stdout.write("module gene size: {}. ratio: {}\n".format(module_genes.shape[0], module_genes.shape[0]/float(len(bg_genes))))
-    return list(module_genes), bg_genes
+    sys.stdout.write("module gene size: {}. ratio: {}\n".format(module_genes.shape[0], module_genes.shape[0]/float(bg_genes.shape[0])))
+    return list(module_genes), list(bg_genes)
 
 
 def run_bionet_for_all_modules(fdr, network_file_name, score_file_name):
@@ -56,6 +61,8 @@ def run_bionet_for_all_modules(fdr, network_file_name, score_file_name):
     all_bg_genes = []
     small_modules=0
     for x in range(50):
+        modules_genes=None
+        bg_genes=None
         try:
            module_genes, bg_genes = get_module(network_file_name, score_file_name, omitted_genes, str(x), fdr=fdr)
         except Exception as e:
@@ -83,7 +90,8 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, fdr=0.0
 
 if __name__ == "__main__":
 
-    main(dataset_file_name="/specific/netapp5/gaga/hagailevi/emp_test/original_datasets/tnfa.tsv", network_file_name="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", go_folder="/specific/netapp5/gaga/hagailevi/emp_test/go", output_folder="/specific/netapp5/gaga/hagailevi/emp_test/true_solutions/")
+    main(dataset_file_name="/specific/netapp5/gaga/hagailevi/emp_test/original_datasets/tnfa.tsv", network_file_name="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", go_folder="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", output_folder="/specific/netapp5/gaga/hagailevi/emp_test/true_solutions/")
+
 
 
 
