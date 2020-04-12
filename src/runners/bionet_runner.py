@@ -10,25 +10,17 @@ sys.path.insert(0, '../..')
 
 import os
 import time
-import shutil
-# import rpy2.robjects.numpy2ri  as numpy2ri
-# numpy2ri.activate()
-
 from rpy2.robjects import pandas2ri
 pandas2ri.activate()
-
-
-
-import src.constants as constants
 
 from src.utils.r_runner import run_rscript
 from src.utils.network import remove_subgraph_by_nodes
 from src.utils.network import build_all_reports
 import numpy as np
-
+import src.constants as constants
 
 ALGO_NAME = "bionet"
-ALGO_DIR = "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/bionet"
+ALGO_DIR = os.path.join(constants.ALGO_DIR, ALGO_NAME)
 
 
 def run_bionet(deg_file_name, network_file_name, fdr=0.05):
@@ -90,7 +82,7 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, fdr=0.0
 
 if __name__ == "__main__":
 
-    main(dataset_file_name="/specific/netapp5/gaga/hagailevi/emp_test/original_datasets/tnfa.tsv", network_file_name="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", go_folder="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", output_folder="/specific/netapp5/gaga/hagailevi/emp_test/true_solutions/")
+    main(dataset_file_name=os.path.join(constants.config_json,"emp_test/original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), go_folder=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), output_folder=os.path.join(constants.config_json,"hagailevi/emp_test/true_solutions/tnfa_{}".format(ALGO_NAME)))
 
 
 

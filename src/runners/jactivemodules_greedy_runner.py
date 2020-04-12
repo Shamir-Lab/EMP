@@ -23,7 +23,7 @@ import src.utils.server as server
 from src.utils.network import output_modules
 
 ALGO_NAME = "jactivemodules"
-ALGO_DIR = "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/jactivemodules"
+ALGO_DIR = os.path.join(constants.ALGO_DIR, ALGO_NAME)
 
 
 def init_params(search_method, network_file_name, output_folder):
@@ -65,6 +65,6 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwarg
 
 if __name__ == "__main__":
 
-    main(dataset_file_name="/media/hag007/Data1/emp_test/original_datasets/brca.tsv", network_file_name="/media/hag007/Data1/emp_test/networks/dip.sif", go_folder="/media/hag007/Data1/emp_test/go", output_folder="/media/hag007/Data1/emp_test/true_solutions/brca_jactivemodules_greedy")
+    main(dataset_file_name=os.path.join(constants.config_json,"emp_test/original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), go_folder=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), output_folder=os.path.join(constants.config_json,"hagailevi/emp_test/true_solutions/tnfa_{}".format(ALGO_NAME)))
 
 

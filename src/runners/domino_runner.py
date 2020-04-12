@@ -65,10 +65,7 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwarg
 
 
 if __name__ == "__main__":
-    ds=["PASCAL_SUM_Crohns_Disease.G50"] # ["PASCAL_SUM_Breast_Cancer.G50", "PASCAL_SUM_Crohns_Disease.G50", "PASCAL_SUM_Schizophrenia.G50", "PASCAL_SUM_Triglycerides.G50", "PASCAL_SUM_Type_2_Diabetes.G50"]
-    for cur in ds:
-        constants.update_dirs(DATASET_NAME_u=cur) # Type_2_Diabetes Crohns_Disease
-        main(dataset_name=constants.DATASET_NAME, score_method=constants.PREDEFINED_SCORE, module_sig_th=0.3)
+    main(dataset_file_name=os.path.join(constants.config_json,"emp_test/original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), go_folder=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), output_folder=os.path.join(constants.config_json,"hagailevi/emp_test/true_solutions/tnfa_{}".format(ALGO_NAME)))
 
 
 

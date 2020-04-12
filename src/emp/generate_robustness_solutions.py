@@ -51,7 +51,7 @@ def main():
     robustness_datasets_folder = args.robustness_datasets_folder
     robustness_solutions_folder = args.robustness_solutions_folder
     go_folder = args.go_folder
-    additional_args=json.loads(args.additional_args)
+    additional_args=json.loads(args.addשלוליתitional_args)
 
     parallelization_factor =  int(args.pf)
     n_start=args.n_start_r

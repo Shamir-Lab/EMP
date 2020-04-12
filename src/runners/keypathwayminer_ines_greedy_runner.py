@@ -9,7 +9,6 @@ import sys
 sys.path.insert(0, '../..')
 
 import os
-import numpy as np
 import subprocess
 
 import shutil
@@ -21,12 +20,10 @@ from src.utils.network import remove_subgraph_by_nodes
 
 from src.utils.network import get_network_genes
 
-import src.utils.infra as infra
-
-from src.utils.network import output_modules
+import pandas as pd
 
 ALGO_NAME = "keypathwayminer"
-ALGO_DIR = "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/keypathwayminer"
+ALGO_DIR = os.path.join(constants.ALGO_DIR, ALGO_NAME)
 
 NETWORK_NAME = "dip"
 
@@ -36,23 +33,16 @@ def init_params(score_file_name, omitted_genes, network_file_name, ts, dest_algo
     if os.path.exists(os.path.join(dest_algo_dir, "results")):
         shutil.rmtree(os.path.join(dest_algo_dir, "results"))
 
-    deg = infra.load_gene_expression_profile_by_genes(gene_expression_path=score_file_name)
-    h_rows, h_cols, deg_data = infra.separate_headers(deg)
-    ind = np.where(h_cols=="qval")[0][0]
-    ordered_ind = np.argsort(deg_data[:,ind])
-    deg_data=deg_data[ordered_ind,:]
-    h_rows=h_rows[ordered_ind]
-    sig_binary_col = deg_data[:,np.where(h_cols=="qval")[0][0]]<0.05
-    sig_binary_output = np.c_[h_rows,  np.array(sig_binary_col, dtype=np.int)]
-    score_file_name = os.path.join(dest_algo_dir, "binary_score.txt")
-    open(score_file_name, "w+").write("\n".join(["\t".join(["id", "pval", "qval"])] + ["\t".join(list(x) + list([x[-1]])) for x in sig_binary_output]))
+    binary_score_file_name = os.path.join(dest_algo_dir, "binary_score.txt")
 
+    df=pd.read_csv(score_file_name, sep='\t', index_col=0).loc[:,"qval"].sort_values()
+    df=(df<=0.05).astype(int)
+    df.to_csv(binary_score_file_name, sep='\t')
 
     new_network_file_name = remove_subgraph_by_nodes(omitted_genes, network_file_name, ts=ts)
-
     bg_genes=get_network_genes(network_file_name)
 
-    return score_file_name, new_network_file_name, bg_genes
+    return binary_score_file_name, new_network_file_name, bg_genes
 
 
 def format_scripts(score_file_name, network_name="dip", STRATEGY="INES", algorithm="GREEDY", algo_dir=None, dataset_name=None):
@@ -110,7 +100,7 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, fdr=0.0
         os.remove(script_file_name)
 
         if empty_counter>3:
-            print("got more that 3 smalle modules in row. continue...")
+            print("got more that 3 small modules in row. continue...")
             break
 
     shutil.rmtree(dest_algo_dir)
@@ -121,5 +111,5 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, fdr=0.0
 
 if __name__ == "__main__":
 
-    main(dataset_file_name="/specific/netapp5/gaga/hagailevi/emp_test/original_datasets/brca.tsv", network_file_name="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", go_folder="/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif", output_folder="/specific/netapp5/gaga/hagailevi/emp_test/true_solutions/")
+    main(dataset_file_name=os.path.join(constants.config_json,"emp_test/original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), go_folder=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), output_folder=os.path.join(constants.config_json,"hagailevi/emp_test/true_solutions/tnfa_{}".format(ALGO_NAME)))
 
