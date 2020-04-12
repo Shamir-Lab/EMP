@@ -495,3 +495,4 @@ def num_op_lt(ds_value, q_value):
         return str.isdigit(ds_value) and float(ds_value) < float(q_value)
     except ValueError:
         return False
+
