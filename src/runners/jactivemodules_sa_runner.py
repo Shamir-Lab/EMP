@@ -44,7 +44,7 @@ def extract_modules_and_bg(bg_genes, results_file_name, modules_genes_file_name,
 
 
 def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
-    print("start running jactivemodules_greedy")
+    print("start running jactivemodules_sa")
     search_method = "sa"
     results_file_name, bg_genes = init_params(search_method, network_file_name, output_folder)
 
