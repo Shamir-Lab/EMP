@@ -15,6 +15,11 @@
   "n_dist_samples" : "5000",
   "override_permutations" : "false",
   "additional_args" : "\"{\\\"slices_file\\\": \\\"/specific/netapp5/gaga/hagailevi/emp_test/networks/dip_ng_modularity_components.txt\\\", \\\"modules_threshold\\\": 0.05, \\\"slices_threshold\\\" : 0.3}\"",
-  "processes" : "generate_real_solution,aggregate_bg_distribution,add_go_metadata,calculate_significance"
+  "processes" : "generate_real_solution,aggregate_bg_distribution,add_go_metadata,calculate_significance",
+  "robustness_datasets_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/robustness_datasets",
+  "robustness_solutions_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/robustness_solutions",
+  "n_start_r" : "0",
+  "n_end_r" : "100",
+  "ss_ratios" : "0.4,0.3,0.2,0.1"
 }
 
