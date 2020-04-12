@@ -1,15 +1,15 @@
 import sys
 sys.path.insert(0, '../')
 import os
-from multiprocessing import Process
 from src import constants
 from src.runners import domino_runner
 from src.runners import netbox_runner
 from src.runners import jactivemodules_greedy_runner
 from src.runners import jactivemodules_sa_runner
 from src.runners import bionet_runner
+from src.runners import hotnet2_runner
 
-ALGO_BY_NAMES = {"DOMINO":domino_runner.main, "netbox":netbox_runner.main, "jactivemodules_greedy":jactivemodules_greedy_runner.main, "jactivemodules_sa":jactivemodules_sa_runner.main, "bionet":bionet_runner.main}
+ALGO_BY_NAMES = {"DOMINO":domino_runner.main, "netbox":netbox_runner.main, "jactivemodules_greedy":jactivemodules_greedy_runner.main, "jactivemodules_sa":jactivemodules_sa_runner.main, "bionet":bionet_runner.main, "bionet":hotnet2_runner.main}
 
 def add_algo_runner(k,v):
     ALGO_BY_NAMES[k]=v

@@ -89,8 +89,7 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwarg
 
 if __name__ == "__main__":
 
-
-    main(dataset_file_name="/media/hag007/Data1/emp_test/original_datasets/tnfa.tsv", network_file_name="/media/hag007/Data1/emp_test/networks/dip.sif", go_folder="/media/hag007/Data1/emp_test/networks/dip.sif", output_folder="/media/hag007/Data1/emp_test/true_solutions/")
+    main(dataset_file_name=os.path.join(constants.config_json,"emp_test/original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), go_folder=os.path.join(constants.config_json,"emp_test/networks/dip.sif"), output_folder=os.path.join(constants.config_json,"hagailevi/emp_test/true_solutions/tnfa_{}".format(ALGO_NAME)))
 
 
 

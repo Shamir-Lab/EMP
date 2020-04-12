@@ -14,3 +14,5 @@ GO_OBO_URL = 'http://purl.obolibrary.org/obo/go/go-basic.obo'
 GO_ASSOCIATION_GENE2GEO_URL = 'https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz'
 GO_FILE_NAME = 'go_bp.obo' #'go-basic.obo'
 GO_ASSOCIATION_FILE_NAME = "gene2go"
+
+ALGO_DIR=config_json["algo_dir"]
