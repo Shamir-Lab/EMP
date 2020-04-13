@@ -12,7 +12,6 @@ import os
 import time
 
 from src.utils.network import get_network_genes
-from src.utils.r_runner import run_rscript
 from src.utils.network import remove_subgraph_by_nodes
 import numpy as np
 import src.constants as constants
@@ -25,6 +24,7 @@ class BionetRunner(AbstractRunner):
 
 
 def run_bionet(self, deg_file_name, network_file_name, fdr=0.05):
+    from src.utils.r_runner import run_rscript
     script = open(os.path.join(self.ALGO_DIR, "{}.r".format(self.ALGO_NAME))).read()
     return run_rscript(script=script, output_vars = ["module_genes", "bg_genes"], network_file_name=network_file_name, deg_file_name=deg_file_name, fdr=fdr)
 
@@ -46,9 +46,6 @@ def get_module(self, network_file_name, score_file_name, omitted_genes, ts=str(t
 
 
 def run(self, dataset_file_name, network_file_name, output_folder, **kwargs):
-
-    from rpy2.robjects import pandas2ri
-    pandas2ri.activate()
 
     fdr=0.05
 

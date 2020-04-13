@@ -11,6 +11,7 @@ from src.utils.randomize_data_robustness import permutation_solution_exists
 from src.utils.daemon_multiprocessing import MyPool, func_star
 from src.runners.run_algo import run_algo
 import src.constants as constants
+from src.utils.go import init_state
 
 def empirical_dist_iteration(dataset_file, rand_idx, algo, ss_ratio, network_file, go_folder, permuted_datasets_folder, permuted_solutions_folder,  additional_args):
 
@@ -51,16 +52,14 @@ def main():
     robustness_datasets_folder = args.robustness_datasets_folder
     robustness_solutions_folder = args.robustness_solutions_folder
     go_folder = args.go_folder
-    additional_args=json.loads(args.addשלוליתitional_args)
-
+    additional_args=json.loads(args.additional_args)
     parallelization_factor =  int(args.pf)
     n_start=args.n_start_r
     n_end=args.n_end_r
     override_permutations=args.override_permutations.lower()=="true"
-
-    constants.GO_DIR=go_folder
-
     dataset_name = os.path.splitext(os.path.split(dataset_file)[1])[0]
+
+    init_state(go_folder)
 
     break_loop=False
     while not break_loop:

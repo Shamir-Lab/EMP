@@ -22,14 +22,16 @@ HG_QVAL = "qval"
 HG_VALUE = "value"
 HG_TABLE_HEADERS = [HG_GO_ROOT, HG_GO_ID, HG_GO_NAME, HG_VALUE, HG_PVAL, HG_QVAL]
 
-assoc=None
 
-dict_result, go2geneids, geneids2go, entrez2ensembl = go_hierarcies.build_hierarcy(
-    roots=['GO:0008150'])
-vertices = list(dict_result.values())[0]['vertices']
 
-terms_to_genes = {}
-ids_to_names = None
+def init_state(go_folder):
+    global dict_result, go2geneids, geneids2go, entrez2ensembl, vertices, assoc, terms_to_genes, ids_to_names
+    dict_result, go2geneids, geneids2go, entrez2ensembl = go_hierarcies.build_hierarcy(go_folder, roots=['GO:0008150'])
+    vertices = list(dict_result.values())[0]['vertices']
+    assoc=None
+    terms_to_genes = {}
+    ids_to_names = None
+
 
 def check_group_enrichment(tested_gene_file_name, total_gene_file_name, go_folder, th=1):
     if len(tested_gene_file_name) == 0 or len(total_gene_file_name) == 0: return []
@@ -72,7 +74,7 @@ def check_group_enrichment(tested_gene_file_name, total_gene_file_name, go_folde
     return hg_report
 
 
-def get_all_genes_for_term(vertices, cur_root, term, in_subtree):
+def get_all_genes_for_term(cur_root, term, in_subtree):
     if term in terms_to_genes:
         return terms_to_genes[cur_root]
 
@@ -86,7 +88,9 @@ def get_all_genes_for_term(vertices, cur_root, term, in_subtree):
             # print("cur_root : {} was not found".format(cur_root))
 
     for cur_child in vertices[cur_root]["obj"].children:
-        all_genes.update(get_all_genes_for_term(vertices, cur_child.id, term, in_subtree))
+        all_genes.update(get_all_genes_for_term(cur_child.id, term, in_subtree))
+
+
 
     terms_to_genes[cur_root] = all_genes
     return all_genes
@@ -97,7 +101,7 @@ def get_go_names(GO_ids, go_folder):
     global ids_to_names
     if ids_to_names is None:
         ids_to_names = {}
-        f = open(os.path.join(go_folder, 'go-basic.obo'))
+        f = open(os.path.join(go_folder, constants.GO_FILE_NAME))
         parsed = f.read().split("\n\n")
         for cur_obo in parsed[1:]:
             if cur_obo.split("\n")[0] != "[Term]": continue

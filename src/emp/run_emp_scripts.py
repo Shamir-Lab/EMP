@@ -9,8 +9,7 @@ import src.constants as constants
 
 import pandas as pd
 import argparse
-
-import time
+import json
 
 current_path=os.path.dirname(os.path.realpath(__file__))
 
@@ -60,7 +59,7 @@ def main():
     parser.add_argument('--go_folder', dest='go_folder', default=constants.config_json["go_folder"])
     parser.add_argument('--permuted_datasets_folder', dest='permuted_datasets_folder', default=constants.config_json["permuted_datasets_folder"])
     parser.add_argument('--permuted_solutions_folder', dest='permuted_solutions_folder', default=constants.config_json["permuted_solutions_folder"])
-    parser.add_argument('--true_solution_folder', dest='true_solution_folder', default=constants.config_json["true_solution_folder"])
+    parser.add_argument('--true_solutions_folder', dest='true_solutions_folder', default=constants.config_json["true_solutions_folder"])
     parser.add_argument('--report_folder', dest='report_folder', default=constants.config_json["report_folder"])
     parser.add_argument('--n_start', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_start', default=constants.config_json["n_start"])
     parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=constants.config_json["n_end"])
@@ -79,7 +78,7 @@ def main():
     go_folder=args.go_folder
     permuted_datasets_folder=args.permuted_datasets_folder
     permuted_solutions_folder=args.permuted_solutions_folder
-    true_solution_folder=args.true_solution_folder
+    true_solutions_folder=args.true_solutions_folder
     report_folder=args.report_folder
     n_start=int(args.n_start)
     n_end=int(args.n_end)
@@ -95,7 +94,7 @@ def main():
     algo_param="--algo {}".format(algo)
     permuted_datasets_folder_param = "--permuted_datasets_folder {}".format(permuted_datasets_folder)
     permuted_solutions_folder_param = "--permuted_solutions_folder {}".format(permuted_solutions_folder)
-    true_solution_folder_param = "--true_solution_folder {}".format(true_solution_folder)
+    true_solutions_folder_param = "--true_solutions_folder {}".format(true_solutions_folder)
     report_folder_param = "--report_folder {}".format(report_folder)
     network_file_param = "--network_file {}".format(network_file)
     go_folder_param = "--go_folder {}".format(go_folder)
@@ -106,13 +105,13 @@ def main():
     n_permutations_param = "--n_permutations {}".format(n_permutations)
     n_total_samples_param = "--n_total_samples {}".format(n_total_samples)
     n_dist_samples_param = "--n_dist_samples {}".format(n_dist_samples)
-    additional_args_param = "--additional_args {}".format(additional_args)
+    additional_args_param = "--additional_args {}".format(json.dumps(str(additional_args)))
 
     params_by_processes={
         "generate_permuted_datasets": [dataset_file_params, algo_param, permuted_datasets_folder_param, n_start_param, n_end_param, pf_param, override_permutations_param],
         "generate_permuted_solutions": [dataset_file_params, algo_param, network_file_param, go_folder_param, permuted_datasets_folder_param, permuted_solutions_folder_param, n_start_param, n_end_param, pf_param, override_permutations_param, additional_args_param],
-        "generate_true_solution": [dataset_file_params, algo_param, network_file_param, go_folder_param, true_solution_folder_param, additional_args_param],
-        "aggregate_bg_distribution": [dataset_file_params, algo_param, go_folder_param, permuted_solutions_folder_param,  true_solution_folder_param, report_folder_param, n_start_param, n_end_param, pf_param],
+        "generate_true_solution": [dataset_file_params, algo_param, network_file_param, go_folder_param, true_solutions_folder_param, additional_args_param],
+        "aggregate_bg_distribution": [dataset_file_params, algo_param, go_folder_param, permuted_solutions_folder_param,  true_solutions_folder_param, report_folder_param, n_start_param, n_end_param, pf_param],
         "add_go_metadata": [dataset_file_params, algo_param, go_folder_param, report_folder_param, n_permutations_param],
         "calculate_significance": [dataset_file_params, algo_param, report_folder_param, n_total_samples_param, n_dist_samples_param]}
 

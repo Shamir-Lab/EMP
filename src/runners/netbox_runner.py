@@ -69,7 +69,7 @@ class NetboxRunner(AbstractRunner):
             pass
         script_file_name = format_script(os.path.join(constants.dir_path, "src/sh", script_name),
                                          NETBOX_HOME=dest_algo_dir,
-                                         BASE_FOLDER="/specific/netapp5/gaga/hagailevi/emp_test",
+                                         BASE_FOLDER=os.path.abspath("../../data/emp_test"),
                                          CONFIG_FILE_NAME=conf_file_name)
         print(subprocess.Popen("bash {}".format(script_file_name), shell=True,
                                stdout=subprocess.PIPE, cwd=dest_algo_dir).stdout.read())

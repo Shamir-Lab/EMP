@@ -3,13 +3,13 @@ sys.path.insert(0, '../')
 import os
 from src import constants
 # from src.runners import domino_runner
-from src.runners import netbox_runner
-from src.runners import jactivemodules_greedy_runner
-from src.runners import jactivemodules_sa_runner
-from src.runners import bionet_runner
-from src.runners import keypathwayminer_ines_greedy_runner
+from src.runners.netbox_runner import NetboxRunner
+from src.runners.jactivemodules_greedy_runner import jAMGreedyRunner
+from src.runners.jactivemodules_sa_runner import jAMSARunner
+from src.runners.bionet_runner import BionetRunner
+from src.runners.keypathwayminer_ines_greedy_runner import KPMRunner
 
-ALGO_BY_NAMES = {"netbox":netbox_runner.main, "jactivemodules_greedy":jactivemodules_greedy_runner.main, "jactivemodules_sa":jactivemodules_sa_runner.main, "bionet":bionet_runner.main, 'keypathwayminer_INES_GREEDY': keypathwayminer_ines_greedy_runner.main}
+ALGO_BY_NAMES = {"netbox":NetboxRunner(), "jactivemodules_greedy": jAMGreedyRunner(), "jactivemodules_sa": jAMSARunner(), "bionet": BionetRunner(), 'keypathwayminer_INES_GREEDY': KPMRunner()}
 
 
 def add_algo_runner(k,v):
@@ -22,6 +22,6 @@ def create_ds_folders(dataset_name):
 
 
 def run_algo(dataset_name, algo, network_file_name, go_folder, output_folder, **kwargs):
-    ALGO_BY_NAMES[algo](dataset_name, network_file_name, go_folder, output_folder, **kwargs)
+    ALGO_BY_NAMES[algo].main(dataset_name, network_file_name, go_folder, output_folder, **kwargs)
 
 
