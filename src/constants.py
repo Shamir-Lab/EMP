@@ -13,7 +13,8 @@ config_json = json.load(open(os.path.join(dir_path, PATH_TO_CONF)))
 GO_DIR=config_json["go_folder"]
 GO_OBO_URL = 'http://purl.obolibrary.org/obo/go/go-basic.obo'
 GO_ASSOCIATION_GENE2GEO_URL = 'https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz'
-GO_FILE_NAME = 'go_bp.obo' #'go-basic.obo'
+GO_FILE_NAME = 'go.obo' #'go-basic.obo'
+
 GO_ASSOCIATION_FILE_NAME = "gene2go"
 BP_GO_ID="GO:0008150"
 

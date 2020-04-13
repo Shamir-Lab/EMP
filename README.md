@@ -60,12 +60,13 @@ parameters:
 `--override_permutations`: whether existing permutation with same positional index should be deleted.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm.   
   
-3. `generate_real_solution` generate an NBMD solution based on the original (i.e. non-permuted) scores.  
+3. `generate_true_solution` generate an NBMD solution based on the original (i.e. non-permuted) scores.  
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
+`--go_folder`: folder where GO files are located.
 `--network_file`: file of the biological network of the analysis.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm. 
   
@@ -76,7 +77,7 @@ parameters:
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
 `--report_folder`: folder where analysis results reside.  
-`--go_folder`: folder where GO files are located.  
+`--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`   
 `--n_start`: starting positional index of permuted datasets/solutions.  
 `--n_end`: ending positional index of permuted datasets/solutions.  
 `--pf`: parallelization factor - number of cores EMP uses.  
@@ -85,14 +86,14 @@ parameters:
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
-`--go_folder`: folder where GO files are located.  
+`--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`   
 `--report_folder`: folder where analysis results reside.  
 `--n_permutations`: file of the biological network according which the analysis is carried.
 
 6. `calculate_significance`: Calculate empirical p-values and correct for multiple testing (FDR):  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
-`--go_folder`: folder where GO files are located.  
+`--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`  
 `--report_folder`: folder where analysis results reside.  
 `--n_total_samples`: enrichment score scores set size. This set is used to build the empirical distribution.  
 `--n_dist_samples`: number of enrichment scores in the empirical distribution.  
@@ -107,7 +108,7 @@ Alternatively, you can run several steps sequencially with `run_emp_scripts`:
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
 `--report_folder`: folder where analysis results reside.  
-`--go_folder`: folder where GO files are located.  
+`--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz` 
 `--n_start`: starting positional index of permuted datasets/solutions.  
 `--n_end`: ending positional index of permuted datasets/solutions.  
 `--pf`: parallelization factor - number of cores EMP uses.  
