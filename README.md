@@ -39,7 +39,8 @@ For example see `src/emp/domino_runner.py` and `src/emp/run_algo.py`.
 
 ## Run EMP
 
-EMP consists of 6 main steps. For a specific set of input parameters, these steps should be carried sequencially.
+EMP consists of 6 main steps. For a specific set of input parameters, these steps should be carried sequentially.  
+Each parameter can be specified as command line parameter (For example `python script.py --param1 value1 --param2 value2`). values of parameters which are not specified in the command line are taken from `config/conf.json`.      
 
 1. `generate_permuted_datasets.py`: Generate permuted datasets.  
 parameters:  
@@ -103,7 +104,7 @@ parameters:
 `--n_dist_samples`: number of enrichment scores in the empirical distribution.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm.
   
-Alternatively, you can run several steps sequencially with `run_emp_scripts`:
+Alternatively, you can run several steps sequentially with `run_emp_scripts`:
 
 
 `--dataset_file`: path to dataset file.  
