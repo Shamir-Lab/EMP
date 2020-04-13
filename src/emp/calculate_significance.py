@@ -151,7 +151,7 @@ def main():
     md_path=os.path.join(report_folder, "emp_diff_modules_{}_{}_md.tsv")
     dist_path=os.path.join(report_folder,"emp_diff_modules_{}_{}.tsv")
 
-    BH_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms, emp_pvals_mat = \
+    EMP_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms, emp_pvals_mat = \
         calculate_sig(algo, dataset_name, n_dist_samples, n_total_samples, md_path=md_path, dist_path=dist_path)
 
 
@@ -169,6 +169,7 @@ def main():
 
     output_md.loc[mask_ids,'emp_pval']=[str(a) for a in  emp_pvals_mat]
     output_md.loc[mask_ids,'emp_pval_max']=[np.min(a) for a in emp_pvals_mat]
+    output_md.loc[mask_ids,'is_emp_pval_max_significant']=output_md.loc[mask_ids,'emp_pval_max']<=EMP_TH
 
     output_md.to_csv(
         os.path.join(report_folder, "emp_diff_modules_{}_{}_passed_oob.tsv".format(dataset_name, algo)),
