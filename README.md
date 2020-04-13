@@ -116,7 +116,7 @@ Alternatively, you can run several steps sequencially with `run_emp_scripts`:
 `--n_start`: starting positional index of permuted datasets/solutions.  
 `--n_end`: ending positional index of permuted datasets/solutions.  
 `--pf`: parallelization factor - number of cores EMP uses.  
-`--network_file`: file of the biological network of the analysis.  
+`--network_file`: file of the biological network of the analysis. The file format should be *.sif with a single pair in each row. For example, see `data/emp_test/networks/dip.sif`    
 `--override_permutations`: whether existing permutation with same positional index should be deleted.  
 `--n_permutations`: file of the biological network according which the analysis is carried.  
 `--n_total_samples`: enrichment score scores set size. This set is used to build the empirical distribution.  

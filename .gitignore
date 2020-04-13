@@ -10,7 +10,7 @@
 /src/sh/run_domino_*.sh
 /src/sh/run_keypathwayminer_*.sh
 /data/emp_test/cache_global/*
-/data/emp_test/cache_global/*
+/data/emp_test/networks/dip0*.sif
 /data/emp_test/go/*
 /data/emp_test/permuted_datasets/*
 /data/emp_test/permuted_solutions/*
