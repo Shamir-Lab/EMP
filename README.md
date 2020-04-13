@@ -39,9 +39,9 @@ For example see `src/emp/domino_runner.py` and `src/emp/run_algo.py`.
 
 ## Run EMP
 
-EMP is consisted of 6 main steps. For a specific set of input parameters, these steps should be carried sequencially.
+EMP consists of 6 main steps. For a specific set of input parameters, these steps should be carried sequencially.
 
-1. `generate_permuted_datasets`: Generate permuted datasets.  
+1. `generate_permuted_datasets.py`: Generate permuted datasets.  
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--permuted_datasets_folder`: folder where permuted datasets reside.  
@@ -50,7 +50,7 @@ parameters:
 `--pf`: parallelization factor - number of cores EMP uses.  
 `--override_permutations`: file of the biological network of the analysis.  
   
-2. `generate_permuted_solutions` Generate permuted solutions:  
+2. `generate_permuted_solutions.py`: Generate permuted solutions:  
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
@@ -64,7 +64,7 @@ parameters:
 `--override_permutations`: whether existing permutation with same positional index should be deleted.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm.   
   
-3. `generate_true_solution` generate an NBMD solution based on the original (i.e. non-permuted) scores.  
+3. `generate_true_solution.py`: Generates an NBMD solution based on the original (i.e. non-permuted) scores.  
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
@@ -74,7 +74,7 @@ parameters:
 `--network_file`: file of the biological network of the analysis.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm. 
   
-4. `aggregare_bg_distribution` aggregate permuted solutions into a background distribution.  
+4. `aggregare_bg_distribution.py`: Aggregates permuted solutions into a background distribution.  
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
@@ -86,7 +86,7 @@ parameters:
 `--n_end`: ending positional index of permuted datasets/solutions.  
 `--pf`: parallelization factor - number of cores EMP uses.  
   
-5. `add_go_metadata`: Add metadata for GO terms
+5. `add_go_metadata.py`: Adds metadata for GO terms
 parameters:  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
@@ -94,7 +94,7 @@ parameters:
 `--report_folder`: folder where analysis results reside.  
 `--n_permutations`: file of the biological network according which the analysis is carried.
 
-6. `calculate_significance`: Calculate empirical p-values and correct for multiple testing (FDR):  
+6. `calculate_significance.py`: Calculates empirical p-values and correct for multiple testing (FDR):  
 `--dataset_file`: path to dataset file.  
 `--algo`: NBMD algorithm.  
 `--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`  
@@ -122,6 +122,7 @@ Alternatively, you can run several steps sequencially with `run_emp_scripts`:
 `--n_total_samples`: enrichment score scores set size. This set is used to build the empirical distribution.  
 `--n_dist_samples`: number of enrichment scores in the empirical distribution.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm  
+`--processes`: comman delimited list of processes that should be carried.  names of processes are the same as its file name, excluding the file extension (.py) e.g "generate_permuted_datasets,generate_permuted_solution"  
 
 Parameters default values are defined at `config/conf.json`  
 
