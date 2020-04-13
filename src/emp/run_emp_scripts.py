@@ -111,7 +111,7 @@ def main():
     params_by_processes={
         "generate_permuted_datasets": [dataset_file_params, algo_param, permuted_datasets_folder_param, n_start_param, n_end_param, pf_param, override_permutations_param],
         "generate_permuted_solutions": [dataset_file_params, algo_param, network_file_param, go_folder_param, permuted_datasets_folder_param, permuted_solutions_folder_param, n_start_param, n_end_param, pf_param, override_permutations_param, additional_args_param],
-        "generate_real_solution": [dataset_file_params, algo_param, network_file_param, go_folder_param, true_solution_folder_param, additional_args_param],
+        "generate_true_solution": [dataset_file_params, algo_param, network_file_param, go_folder_param, true_solution_folder_param, additional_args_param],
         "aggregate_bg_distribution": [dataset_file_params, algo_param, go_folder_param, permuted_solutions_folder_param,  true_solution_folder_param, report_folder_param, n_start_param, n_end_param, pf_param],
         "add_go_metadata": [dataset_file_params, algo_param, go_folder_param, report_folder_param, n_permutations_param],
         "calculate_significance": [dataset_file_params, algo_param, report_folder_param, n_total_samples_param, n_dist_samples_param]}

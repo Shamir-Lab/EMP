@@ -17,11 +17,15 @@ git clone https://github.com/Shamir-Lab/EMP.git
 cd EMP
 ```
 
-EMP is written in Python 3.6. The necessary libraries will all be installed by the `setup.py` script.
-We recommend using a virtual environment. For example, in Linux, before running `setup.py`:
+EMP is written in Python 3.6. We recommend using a virtual environment. in Linux:
 ```
 python -m venv emp-env
 source emp-env/bin/activate
+```
+
+To install EMP dependencies type:
+```
+pip install -r  config/dependencies.txt
 ```
 
 
