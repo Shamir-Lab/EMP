@@ -13,8 +13,8 @@ Download the sources and install according to the following:
 
 Clone thr repo from github:
 ```
-    git clone https://github.com/Shamir-Lab/EMP.git
-    cd EMP
+git clone https://github.com/Shamir-Lab/EMP.git
+cd EMP
 ```
 
 EMP is written in Python 3.6. The necessary libraries will all be installed by the `setup.py` script.
@@ -25,7 +25,7 @@ source emp-env/bin/activate
 ```
 
 
-## integrate your NBMD algorithm with EMP
+## Integrate your NBMD algorithm with EMP
 
 First, you need to make EMP to be aware to your NBMD algorithm.    
 1. Create an endpoint file your algorithm.  This file your algorithm should inherent AbstractRunner class (see `src/runnners/abstract_runners.py`).   
