@@ -5,7 +5,6 @@ import os
 import src.constants as constants
 
 import random
-from src.utils.network import get_network_genes
 
 def get_permuted_folder_name(dataset, algo=None, index=None, ss_ratio=None):
     random_ds_name="{}_robustness".format(dataset)

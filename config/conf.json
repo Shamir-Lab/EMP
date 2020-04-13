@@ -8,7 +8,7 @@
   "true_solution_folder" : "/media/hag007/Data/emp_test/true_solution_folder",
   "report_folder" : "/media/hag007/Data/emp_test/report",
   "n_start" : "0",
-  "n_end" : "1",
+  "n_end" : "10",
   "pf" : "3",
   "n_permutations" : "5000",
   "n_total_samples" : "5000",
@@ -21,6 +21,7 @@
   "n_start_r" : "0",
   "n_end_r" : "100",
   "ss_ratios" : "0.4,0.3,0.2,0.1",
+  "base_dir": "/media/hag007/Data/emp_test/",
   "algo_dir": "/media/hag007/Data/repos/bnetworks_alg/",
   "algo_dir_client": "/media/hag007/Data/repos/bnetworks_alg/",
   "algo_dir_server": "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/"
