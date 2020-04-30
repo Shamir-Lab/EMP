@@ -63,8 +63,6 @@ class jAMGreedyRunner(AbstractRunner):
 
 
 if __name__ == "__main__":
-    from src.utils.go import init_state
-    init_state(os.path.join(constants.config_json["base_dir"],"go"))
     runner=jAMGreedyRunner()
     runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/tnfa_{}_{}".format(runner.ALGO_NAME, runner.search_method)))
 

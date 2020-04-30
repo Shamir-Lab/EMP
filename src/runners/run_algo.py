@@ -2,14 +2,14 @@ import sys
 sys.path.insert(0, '../')
 import os
 from src import constants
-# from src.runners import domino_runner
+from src.runners.domino_runner import DominoRunner
 from src.runners.netbox_runner import NetboxRunner
 from src.runners.jactivemodules_greedy_runner import jAMGreedyRunner
 from src.runners.jactivemodules_sa_runner import jAMSARunner
 from src.runners.bionet_runner import BionetRunner
 from src.runners.keypathwayminer_ines_greedy_runner import KPMRunner
 
-ALGO_BY_NAMES = {"netbox":NetboxRunner(), "jactivemodules_greedy": jAMGreedyRunner(), "jactivemodules_sa": jAMSARunner(), "bionet": BionetRunner(), 'keypathwayminer_INES_GREEDY': KPMRunner()}
+ALGO_BY_NAMES = {"netbox":NetboxRunner(), "jactivemodules_greedy": jAMGreedyRunner(), "jactivemodules_sa": jAMSARunner(), "bionet": BionetRunner(), 'keypathwayminer_INES_GREEDY': KPMRunner(), 'DOMINO': DominoRunner()}
 
 
 def add_algo_runner(k,v):

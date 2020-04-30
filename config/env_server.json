@@ -1,0 +1,28 @@
+{
+  "dataset_file" : "/specific/netapp5/gaga/hagailevi/emp_test/original_datasets/scz.tsv",
+  "algo" : "netbox",
+  "network_file" : "/specific/netapp5/gaga/hagailevi/emp_test/networks/dip.sif",
+  "go_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/go",
+  "permuted_datasets_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/permuted_datasets",
+  "permuted_solutions_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/permuted_solutions",
+  "true_solution_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/true_solution_folder",
+  "report_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/report",
+  "n_start" : "0",
+  "n_end" : "1000",
+  "pf" : "3",
+  "n_permutations" : "1000",
+  "n_total_samples" : "1000",
+  "n_dist_samples" : "1000",
+  "override_permutations" : "false",
+  "additional_args" : "{\"slices_file\": \"/specific/netapp5/gaga/hagailevi/emp_test/networks/dip_ng_modularity_components.txt\", \"modules_threshold\": 0.05, \"slices_threshold\" : 0.3}",
+  "processes" : "add_go_metadata,calculate_significance",
+  "robustness_datasets_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/robustness_datasets",
+  "robustness_solutions_folder" : "/specific/netapp5/gaga/hagailevi/emp_test/robustness_solutions",
+  "n_start_r" : "0",
+  "n_end_r" : "100",
+  "ss_ratios" : "0.4,0.3,0.2,0.1",
+  "algo_dir": "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/",
+  "algo_dir_client": "/media/hag007/Data/repos/bnetworks_alg/",
+  "algo_dir_server": "/specific/netapp5/gaga/hagailevi/evaluation/bnetworks_alg/"
+}
+

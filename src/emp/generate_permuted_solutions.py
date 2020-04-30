@@ -23,7 +23,7 @@ def empirical_dist_iteration(dataset_file, rand_idx, algo, network_file, go_fold
         os.makedirs(output_folder)
     except FileExistsError:
         pass
-    
+        
     run_algo(os.path.join(os.path.join(permuted_datasets_folder, permuted_folder), "data", constants.SCORES_FILE_NANE), algo=algo,
              network_file_name=network_file, go_folder=go_folder, output_folder=output_folder, **additional_args)
     print("done generating permuted solution: {}, {}, {}".format(dataset_file, algo, rand_idx))
@@ -41,7 +41,7 @@ def main():
     parser.add_argument('--n_end', help="number of iterations (total n permutation is pf*(n_end-n_start))", dest='n_end', default=constants.config_json["n_end"])
     parser.add_argument('--pf', dest='pf', help="parallelization factor", default=constants.config_json["pf"])
     parser.add_argument('--override_permutations', help="override_permutations", dest='override_permutations', default=constants.config_json["override_permutations"])
-    parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default="{}")
+    parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default=constants.config_json["additional_args"])
     args = parser.parse_args()
 
     dataset_file=args.dataset_file
@@ -71,7 +71,7 @@ def main():
             p.map(func_star, params)
             break_loop=True
 
-        except (MemoryError, OSError) as e:
+        except (Exception, MemoryError, OSError) as e:
             # p.close()
             print(e)
             raise

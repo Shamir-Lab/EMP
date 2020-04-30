@@ -23,3 +23,4 @@ $hotnet2/venv/bin/python $hotnet2/makeHeatFile.py \
     -hf $cache_folder/heatfile.txt \
     -o  $cache_folder/heatfile.json \
     -n  heatfile
+

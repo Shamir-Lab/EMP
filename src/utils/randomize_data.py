@@ -20,8 +20,7 @@ def get_permuted_folder_name(dataset, algo=None, index=None):
 def permutation_solution_exists(dataset, algo, index, output_folder):
 
     return os.path.exists(
-        os.path.join(output_folder, "sol_{}_{}".format(algo, get_permuted_folder_name(dataset, index)), "report",
-                     "modules_summary.tsv"))
+        os.path.join(output_folder, "sol_{}_{}".format(algo, get_permuted_folder_name(dataset, index)),"report", "modules_summary.tsv"))  # "cache", "hotnet2_module_0_genes.txt"))#  "report", "modules_summary.tsv"))
 
 def permutation_dataset_exists(dataset, index, output_folder):
     
