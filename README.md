@@ -11,13 +11,13 @@ We used EMP to evaluate six NBMD methods on GE and GWAS data.
 * HotNet2 (Raphael et al, 2015)
 * KeyPathwayMiner (Alcaraz et al, 2012)
 * Bionet (Beisser et al, 2010)
-* DOMINO - An algorithm we developed that produced reduced false GO term calls (https://github.com/Shamir-Lab/DOMINO) 
+* DOMINO - An algorithm we developed that produces reduced false GO term calls (https://github.com/Shamir-Lab/DOMINO) 
 
 In our evaluation DOMINO outperformed the other algorithms.
   
-preprint version of the study is available at: https://www.biorxiv.org/content/10.1101/2020.03.10.984963v1
+A preprint version of the study is available at: https://www.biorxiv.org/content/10.1101/2020.03.10.984963v1
   
-Users who wish to reproduce or extend the evaluation, including the algorithms tested in the study, are welcome to contact by email: hagai.levi.007@gmail.com.      
+Users who wish to reproduce or extend the evaluation, including the algorithms tested in the study, are welcome to contact us via email: hagai.levi.007@gmail.com.      
       
 ## Outline
 
