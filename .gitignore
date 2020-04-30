@@ -1,7 +1,6 @@
 /python
 /.idea
 /build
-/config/conf.json
 /data/emp_test/go/gene2go
 /dist
 /*.egg-info/
