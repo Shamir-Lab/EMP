@@ -52,7 +52,8 @@ def check_group_enrichment(tested_gene_file_name, total_gene_file_name, go_folde
     obo_dag = GODag(os.path.join(go_folder, constants.GO_FILE_NAME))
 
     if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME)):
-        download(constants.GO_ASSOCIATION_GENE2GEO_URL, constants.GO_DIR)
+        if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME+".gz")):
+            download(constants.GO_ASSOCIATION_GENE2GEO_URL, constants.GO_DIR)
         with gzip.open(os.path.join(go_folder, os.path.basename(constants.GO_ASSOCIATION_GENE2GEO_URL)), 'rb') as f_in:
             with open(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME),'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
@@ -82,10 +83,9 @@ def get_all_genes_for_term(cur_root, term, in_subtree):
     if in_subtree:
         try:
             all_genes.update(go2geneids[cur_root])
-        except Exception:
+        except Exception as e:
             # print(e)
             pass
-            # print("cur_root : {} was not found".format(cur_root))
 
     for cur_child in vertices[cur_root]["obj"].children:
         all_genes.update(get_all_genes_for_term(cur_child.id, term, in_subtree))

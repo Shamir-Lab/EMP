@@ -1,5 +1,5 @@
 {
-  "dataset_file" : "../../../../emp_test/original_datasets/sczp3.tsv",
+  "dataset_file" : "../../../../emp_test/original_datasets/tnfa.tsv",
 
   "algo" : "jactivemodules_greedy",
   "network_file" : "../../../../emp_test/networks/dip.sif",

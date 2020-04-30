@@ -1,7 +1,8 @@
 /python
 /.idea
 /build
-/config/conf_client.json
+/config/conf.json
+/data/emp_test/go/gene2go
 /dist
 /*.egg-info/
 *.pyc

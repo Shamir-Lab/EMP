@@ -259,7 +259,8 @@ def fetch_go_hierarcy(go_folder):
     #                   os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME))
 
     if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME)):
-        wget.download(constants.GO_ASSOCIATION_GENE2GEO_URL, os.path.join(constants.GO_DIR, os.path.split(constants.GO_ASSOCIATION_GENE2GEO_URL)[1]))
+        if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME+".gz")):
+            wget.download(constants.GO_ASSOCIATION_GENE2GEO_URL, os.path.join(constants.GO_DIR, os.path.split(constants.GO_ASSOCIATION_GENE2GEO_URL)[1]))
         with gzip.open(os.path.join(go_folder, os.path.basename(constants.GO_ASSOCIATION_GENE2GEO_URL)), 'rb') as f_in:
             with open(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME),'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
