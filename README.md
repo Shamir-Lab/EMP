@@ -2,16 +2,36 @@
 
 EMP: EMpirical Pipeline for correcting GO terms obtained by network-based module discovery (NBMD) algorithms.
 
-- [Setting your environment](#setting-your-environment)
+NBMD algorithms receive a gene network and nodes' activity scores as input and report sub-networks (modules) that are putatively biologically active. We observed that GO terms enriched in modules detected by these methods on the real data were often also enriched after randomly permuting the input data.  
+To tackle this bias, we designed a method that evaluates the empirical significance of GO terms reported as enriched in modules. 
+
+We used EMP to evaluate six NBMD methods on GE and GWAS data. 
+* jActiveModules (Ideker et al, 2002)
+* NetBox (Cerami et al, 2010)
+* HotNet2 (Raphael et al, 2015)
+* KeyPathwayMiner (Alcaraz et al, 2012)
+* Bionet (Beisser et al, 2010)
+* DOMINO - An algorithm we developed that produced reduced false GO term calls (https://github.com/Shamir-Lab/DOMINO) 
+
+In our evaluation DOMINO outperformed the other algorithms.
+  
+preprint version of the study is available at: https://www.biorxiv.org/content/10.1101/2020.03.10.984963v1
+  
+Users who wish to reproduce or extend the evaluation, including the algorithms tested in the study, are welcome to contact by email: hagai.levi.007@gmail.com.      
+      
+## Outline
+
+
+- [Set your environment](#set-your-environment)
 - [Integrate your NBMD algorithm with EMP](#integrate-your-nbmd-algorithm-with-emp)
 - [Run EMP](#run-emp)
 - [Main output files](#main-output-files)
 
-## Setting your environment
+## Set your environment
 
 Download the sources and install according to the following:
 
-Clone thr repo from github:
+Clone the repo from github:
 ```
 git clone https://github.com/Shamir-Lab/EMP.git
 cd EMP
