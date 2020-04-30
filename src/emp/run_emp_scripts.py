@@ -69,7 +69,7 @@ def main():
     parser.add_argument('--n_dist_samples', help="n_dist_samples", dest='n_dist_samples', default=constants.config_json["n_dist_samples"])
     parser.add_argument('--override_permutations', help="override_permutations", dest='override_permutations', default=constants.config_json["override_permutations"])
     parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default=constants.config_json["additional_args"])
-    parser.add_argument('--processes', dest="processes", help='aggregate_bg_distribution,add_go_metadata,calculate_significance', default=constants.config_json["processes"])
+    parser.add_argument('--processes', dest="processes", help='regenerate_bg_distribution,add_go_metadata,calculate_significance', default=constants.config_json["processes"])
     args = parser.parse_args()
 
     dataset_file=args.dataset_file
@@ -112,6 +112,7 @@ def main():
         "generate_permuted_solutions": [dataset_file_params, algo_param, network_file_param, go_folder_param, permuted_datasets_folder_param, permuted_solutions_folder_param, n_start_param, n_end_param, pf_param, override_permutations_param, additional_args_param],
         "generate_true_solution": [dataset_file_params, algo_param, network_file_param, go_folder_param, true_solutions_folder_param, additional_args_param],
         "aggregate_bg_distribution": [dataset_file_params, algo_param, go_folder_param, permuted_solutions_folder_param,  true_solutions_folder_param, report_folder_param, n_start_param, n_end_param, pf_param],
+        "regenerate_bg_distribution": [dataset_file_params, algo_param, go_folder_param, permuted_solutions_folder_param,  true_solutions_folder_param, report_folder_param, n_start_param, n_end_param, pf_param],
         "add_go_metadata": [dataset_file_params, algo_param, go_folder_param, report_folder_param, n_permutations_param],
         "calculate_significance": [dataset_file_params, algo_param, report_folder_param, n_total_samples_param, n_dist_samples_param]}
 

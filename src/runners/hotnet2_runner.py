@@ -14,7 +14,7 @@ from numpy import log10
 import pandas as pd
 import subprocess
 import simplejson as json
-
+import shutil
 
 import src.constants as constants
 
@@ -59,7 +59,7 @@ class Hotnet2Runner(AbstractRunner):
         heat_file_name = os.path.join(cache_folder, "heatfile.txt")
 
 
-        scores=pd.read_csv(score_file_name,index_col=0, sep='\t').loc[:,"qval"].apply(lambda a : -log10(a))
+        scores=pd.read_csv(score_file_name,index_col=0, sep='\t').loc[:,"qval"].apply(lambda a : -log10(a) if a != 0 else 315)
         scores.to_csv(heat_file_name,sep=' ',header=False)
 
 
@@ -71,11 +71,16 @@ class Hotnet2Runner(AbstractRunner):
         return heat_file_name, bg_genes, cache_folder
 
 
-    def extract_modules_and_bg(self, bg_genes, cache_folder):
+    def extract_modules_and_bg(self, bg_genes,  cache_folder, output_folder):
         results = json.load(open(os.path.join(cache_folder, "results", "consensus", "subnetworks.json")))
         modules = [x["core"] for x in results["consensus"] if len(x["core"]) > 3 ]
         all_bg_genes = [bg_genes for x in modules]
         print("extracted {} modules".format(len(modules)))
+        shutil.rmtree(cache_folder)
+        os.makedirs(cache_folder)
+        for i, genes in enumerate(modules):
+            modules_genes_file_name=os.path.join(cache_folder, "hotnet2_module_{}_genes.txt".format(i))
+            open(modules_genes_file_name, "w+").write("\n".join(genes))
         return modules, all_bg_genes
 
 
@@ -89,14 +94,17 @@ class Hotnet2Runner(AbstractRunner):
         print(subprocess.Popen("bash {}".format(script_file_name), shell=True,
                                stdout=subprocess.PIPE).stdout.read())  # cwd=dir_path
         os.remove(script_file_name)
-        modules, all_bg_genes = self.extract_modules_and_bg(bg_genes, cache_folder)
+        modules, all_bg_genes = self.extract_modules_and_bg(bg_genes, cache_folder, output_folder)
         print(len(modules))
         return modules, all_bg_genes
 
+    def main(self, dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
+            modules, all_bg_genes = self.run(os.path.abspath(dataset_file_name), os.path.abspath(network_file_name), os.path.abspath(output_folder), **kwargs)
+            # self.build_all_reports(self.ALGO_NAME, modules, all_bg_genes, os.path.abspath(go_folder), os.path.abspath(os.path.join(output_folder, "report")))
 
 if __name__ == "__main__":
     runner=Hotnet2Runner()
-    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/tnfa_{}".format(runner.ALGO_NAME)))
+    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/hgt.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/hgt_{}".format(runner.ALGO_NAME)))
 
 
 

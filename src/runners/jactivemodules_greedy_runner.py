@@ -55,12 +55,16 @@ class jAMGreedyRunner(AbstractRunner):
         os.remove(script_file_name)
         modules_genes_file_name = os.path.join(output_folder,
                                                "{}_{}_module_genes.txt".format(self.ALGO_NAME, self.search_method))
+
         all_bg_genes, modules = self.extract_modules_and_bg(bg_genes, results_file_name, modules_genes_file_name,
                                                             output_folder)
+        print([len(m) for m in modules])
         return modules, all_bg_genes
 
 
 if __name__ == "__main__":
+    from src.utils.go import init_state
+    init_state(os.path.join(constants.config_json["base_dir"],"go"))
     runner=jAMGreedyRunner()
     runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/tnfa_{}_{}".format(runner.ALGO_NAME, runner.search_method)))
 
