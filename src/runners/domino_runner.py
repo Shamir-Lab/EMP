@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-"""Calculate differentially expressed genes using EdgeR from bioconductor.
-http://bioconductor.org/packages/2.5/bioc/html/edgeR.html
-Usage:
-    count_diffexp.py <count_file>
-"""
 import sys
 sys.path.insert(0, '../')
 
@@ -18,7 +12,7 @@ from src.utils.network import get_network_genes
 from src.runners.abstract_runner import AbstractRunner
 class DominoRunner(AbstractRunner):
     def __init__(self):
-        super().__init__("DOMINO")
+        super().__init__("DOMINO2")
 
 
     def extract_modules_and_bg(self, bg_genes, dest_algo_dir):
@@ -46,8 +40,14 @@ class DominoRunner(AbstractRunner):
 
 
     def run(self, dataset_file_name, network_file_name, output_folder, **kwargs):
-        print("run domino....")
+        print("run domino runner...")
         slices_file = kwargs['slices_file']
+        constants.N_OF_THREADS=1
+        if 'n_of_threads' in kwargs:
+            constants.N_OF_THREADS=kwargs['n_of_threads']
+        constants.USE_CACHE=False
+        if 'use_cache' in kwargs:
+            constants.USE_CACHE=kwargs['use_cache']=='true'
         slice_threshold = 0.3
         if 'slice_threshold' in kwargs:
             slice_threshold = kwargs['slice_threshold']
@@ -55,6 +55,7 @@ class DominoRunner(AbstractRunner):
         if 'module_threshold' in kwargs:
             module_threshold = kwargs['module_threshold']
         active_genes_file, bg_genes = self.init_params(dataset_file_name, network_file_name, output_folder)
+        print(f'domino_parameters: active_genes_file={active_genes_file}, network_file={network_file_name},slices_file={slices_file}, slice_threshold={slice_threshold},module_threshold={module_threshold}')
         modules = domino_main(active_genes_file=active_genes_file, network_file=network_file_name,
                               slices_file=slices_file, slice_threshold=slice_threshold,
                               module_threshold=module_threshold)
@@ -64,8 +65,11 @@ class DominoRunner(AbstractRunner):
 
 
 if __name__ == "__main__":
+    constants.N_OF_THREADS=1
+    constants.USE_CACHE=False
     runner=DominoRunner()
-    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/tnfa_{}".format(runner.ALGO_NAME)), slices_file=os.path.join(constants.config_json["base_dir"],"networks/dip_ng_modularity_components.txt"), module_threshold=0.05, slice_threshold=0.3)
+    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/brca.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/string_minimal_no_prefix_500_g.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/tnfa_{}".format(runner.ALGO_NAME)), slices_file=os.path.join(constants.config_json["base_dir"],"networks/string_modules_agg.txt"), module_threshold=0.05, slice_threshold=0.3)
+
 
 
 

@@ -3,13 +3,21 @@ sys.path.insert(0, '../')
 import os
 from src import constants
 from src.runners.domino_runner import DominoRunner
+from src.runners.domino_runner_string import DominoRunner as DominoRunnerString
+from src.runners.domino_runner_test import DominoRunner as DominoRunnerTest
+from src.runners.domino_runner_huri import DominoRunner as DominoRunnerHuri
+from src.runners.domino_runner_test2 import DominoRunner as DominoRunnerTest2
+from src.runners.domino_runner_test3 import DominoRunner as DominoRunnerTest3
+from src.runners.domino_runner_test4 import DominoRunner as DominoRunnerTest4
+from src.runners.domino_runner_test5 import DominoRunner as DominoRunnerTest5
+from src.runners.domino_runner_test6 import DominoRunner as DominoRunnerTest6
 from src.runners.netbox_runner import NetboxRunner
 from src.runners.jactivemodules_greedy_runner import jAMGreedyRunner
 from src.runners.jactivemodules_sa_runner import jAMSARunner
 from src.runners.bionet_runner import BionetRunner
 from src.runners.keypathwayminer_ines_greedy_runner import KPMRunner
 
-ALGO_BY_NAMES = {"netbox":NetboxRunner(), "jactivemodules_greedy": jAMGreedyRunner(), "jactivemodules_sa": jAMSARunner(), "bionet": BionetRunner(), 'keypathwayminer_INES_GREEDY': KPMRunner(), 'DOMINO': DominoRunner()}
+ALGO_BY_NAMES = {"netbox":NetboxRunner(), "netbox2_string":NetboxRunner(), "netbox2":NetboxRunner(), "netbox3":NetboxRunner(), "jactivemodules_greedy": jAMGreedyRunner(), "jactivemodules_greedy_string": jAMGreedyRunner(), "jactivemodules_sa": jAMSARunner(), "bionet": BionetRunner(), "bionet_string": BionetRunner(), 'keypathwayminer_INES_GREEDY': KPMRunner(), 'DOMINO2': DominoRunner(), 'DOMINO3': DominoRunnerString(), 'DOMINO4' : DominoRunnerHuri(), 'DOMINO_test' : DominoRunnerTest(), 'DOMINO_test2' : DominoRunnerTest2(), 'DOMINO_test3' : DominoRunnerTest3(), 'DOMINO_test4' : DominoRunnerTest4(), 'DOMINO_test5' : DominoRunnerTest5(), 'DOMINO_test6' : DominoRunnerTest6()}
 
 
 def add_algo_runner(k,v):
