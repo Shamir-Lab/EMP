@@ -50,7 +50,7 @@ def main():
     break_loop=False
     while not break_loop:
         try:
-            # [ empirical_dist_iteration(dataset_file, x, algo, network_file, ss_ratio, permuted_datasets_folder) for ss_ratio in ss_ratios for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_dataset_exists(dataset_name, x, ss_ratio, permuted_datasets_folder)]
+            [ empirical_dist_iteration(dataset_file, x, algo, network_file, ss_ratio, permuted_datasets_folder) for ss_ratio in ss_ratios for x in np.arange(int(n_start), int(n_end))] # if override_permutations or not permutation_dataset_exists(dataset_name, x, ss_ratio, permuted_datasets_folder)]
             # empirical_dist_iteration(dataset_file, x, algo, output_folder)
             p = MyPool(parallelization_factor)
             params=[ [empirical_dist_iteration, [dataset_file, x, algo, network_file, ss_ratio, permuted_datasets_folder]] for ss_ratio in ss_ratios for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_dataset_exists(dataset_name, x, ss_ratio, permuted_datasets_folder)]

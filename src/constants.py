@@ -16,3 +16,5 @@ GO_FILE_NAME = 'go_bp.obo' #'go-basic.obo'
 GO_ASSOCIATION_FILE_NAME = "gene2go"
 
 ALGO_DIR=config_json["algo_dir"]
+
+N_GO_TERMS=7035

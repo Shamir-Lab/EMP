@@ -5,7 +5,5 @@
 /dist
 /*.egg-info/
 *.pyc
-/src/sh/run_netbox_*.sh
-/src/sh/run_jactivemodules_*.sh
-/src/sh/run_domino_*.sh
-/src/sh/run_keypathwayminer_*.sh
+/src/sh/*.sh
+

@@ -44,6 +44,7 @@ def init_params(dataset_file_name, network_file_name, output_folder):
 
 def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
     print("run domino....")
+    
     slices_file=kwargs['slices_file']
 
     slice_threshold=0.3

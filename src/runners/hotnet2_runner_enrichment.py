@@ -93,17 +93,33 @@ def extract_modules_and_bg(bg_genes, cache_folder):
     return modules, all_bg_genes
 
 
+def get_modules_from_files(cache_folder, network_file_name):
+    modules=[]
+    bgs=[]
+    bg_genes=get_network_genes(network_file_name)
+    for a in np.arange(100):
+        module_file_name=os.path.join(cache_folder, "hotnet2_module_{}_genes.txt".format(a))
+        if os.path.exists(module_file_name):
+            genes=open(module_file_name, "r").readlines()
+            genes=[g.strip() for g in genes]
+            modules.append(genes)
+            bgs.append(bg_genes)
+    return modules, bgs
+    
 def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
 
-    heat_file_name, bg_genes, cache_folder = init_params(dataset_file_name, output_folder, network_file_name)
+    # heat_file_name, bg_genes, cache_folder = init_params(dataset_file_name, output_folder, network_file_name)
 
-    script_file_name=format_script(os.path.join(constants.dir_path, "src/sh", "run_{}.sh".format(ALGO_NAME)), ALGO_DIR=ALGO_DIR,
-                  CACHE_DIR=cache_folder, OUTPUT_DIR=cache_folder, NETWORK_NAME=os.path.splitext(os.path.basename(network_file_name))[0])
-    print(subprocess.Popen("bash {}".format(script_file_name), shell=True,
-                           stdout=subprocess.PIPE).stdout.read())  # cwd=dir_path
-    # os.remove(script_file_name)
-    modules, all_bg_genes = extract_modules_and_bg(bg_genes, cache_folder)
-    print(len(modules))
+    # script_file_name=format_script(os.path.join(constants.dir_path, "src/sh", "run_{}.sh".format(ALGO_NAME)), ALGO_DIR=ALGO_DIR,
+    #               CACHE_DIR=cache_folder, OUTPUT_DIR=cache_folder, NETWORK_NAME=os.path.splitext(os.path.basename(network_file_name))[0])
+    # print(subprocess.Popen("bash {}".format(script_file_name), shell=True,
+    #                        stdout=subprocess.PIPE).stdout.read())  # cwd=dir_path
+    # # os.remove(script_file_name)
+
+    # modules, all_bg_genes = extract_modules_and_bg(bg_genes, cache_folder)
+    # print(len(modules))
+    cache_folder = os.path.join(output_folder, "cache")
+    modules, all_bg_genes = get_modules_from_files(cache_folder, network_file_name)
     build_all_reports(ALGO_NAME, modules, all_bg_genes, go_folder, os.path.join(output_folder, "report"))
 
 
