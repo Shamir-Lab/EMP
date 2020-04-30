@@ -40,7 +40,7 @@ def main():
     parser.add_argument('--pf', dest='pf', help="parallelization factor", default=constants.config_json["pf"])
     parser.add_argument('--ss_ratios', help="ss_ratios", dest='ss_ratios', default=constants.config_json["ss_ratios"])
     parser.add_argument('--override_permutations', help="override_permutations", dest='override_permutations', default=constants.config_json["override_permutations"])
-    parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default="{\"slices_file\": \"/media/hag007/Data/emp_test/networks/dip_ng_modularity_components.txt\", \"modules_threshold\": 0.05, \"slices_threshold\" : 0.3}")
+    parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default=constants.config_json['additional_args'])
 
     args = parser.parse_args()
 
@@ -51,7 +51,7 @@ def main():
     robustness_datasets_folder = args.robustness_datasets_folder
     robustness_solutions_folder = args.robustness_solutions_folder
     go_folder = args.go_folder
-    additional_args=json.loads(args.addשלוליתitional_args)
+    additional_args=json.loads(args.additional_args)
 
     parallelization_factor =  int(args.pf)
     n_start=args.n_start_r

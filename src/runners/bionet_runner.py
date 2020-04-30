@@ -10,11 +10,6 @@ sys.path.insert(0, '../..')
 
 import os
 import time
-<<<<<<< HEAD
-from rpy2.robjects import pandas2ri
-pandas2ri.activate()
-
-=======
 
 from rpy2.robjects import pandas2ri
 pandas2ri.activate()
@@ -24,7 +19,6 @@ pandas2ri.activate()
 import src.constants as constants
 
 from src.utils.network import get_network_genes
->>>>>>> d02ee0cba3cb84ae086e29c27587d174ea3ac5f3
 from src.utils.r_runner import run_rscript
 from src.utils.network import remove_subgraph_by_nodes
 from src.utils.network import build_all_reports

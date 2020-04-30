@@ -20,7 +20,6 @@ import src.constants as constants
 
 from src.utils.scripts import format_script
 from src.utils.network import get_network_genes
-from src.utils.network import build_all_reports
 
 ALGO_NAME = "hotnet2"
 ALGO_DIR = os.path.join(constants.ALGO_DIR, ALGO_NAME)
@@ -104,7 +103,7 @@ def main(dataset_file_name, network_file_name, go_folder, output_folder, **kwarg
     # os.remove(script_file_name)
     modules, all_bg_genes = extract_modules_and_bg(bg_genes, cache_folder)
     print(len(modules))
-    build_all_reports(ALGO_NAME, modules, all_bg_genes, go_folder, os.path.join(output_folder, "report"))
+    # build_all_reports(ALGO_NAME, modules, all_bg_genes, go_folder, os.path.join(output_folder, "report"))
 
 
 if __name__ == "__main__":
