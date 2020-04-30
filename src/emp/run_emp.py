@@ -88,7 +88,7 @@ def main():
     n_permutations = int(args.n_total_samples)
     n_total_samples = int(args.n_total_samples)
     n_dist_samples = int(args.n_dist_samples)
-    additional_args = json.dumps(args.additional_args)
+    additional_args = args.additional_args
     processes = args.processes.split(",")
 
     dataset_file_params = "--dataset_file {}".format(dataset_file)

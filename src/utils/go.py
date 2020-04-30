@@ -83,8 +83,7 @@ def get_all_genes_for_term(cur_root, term, in_subtree):
     if in_subtree:
         try:
             all_genes.update(go2geneids[cur_root])
-        except Exception as e:
-            # print(e)
+        except KeyError as e:
             pass
 
     for cur_child in vertices[cur_root]["obj"].children:

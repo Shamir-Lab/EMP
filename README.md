@@ -104,7 +104,7 @@ parameters:
 `--n_dist_samples`: number of enrichment scores in the empirical distribution.  
 `--additional_args`: additional arguments that are relevant to a particular NBMD algorithm.
   
-Alternatively, you can run several steps sequentially with `run_emp_scripts`:
+Alternatively, you can run several steps sequentially with `run_emp.py`:
 
 
 `--dataset_file`: path to dataset file.  
