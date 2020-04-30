@@ -17,8 +17,9 @@ In our evaluation DOMINO outperformed the other algorithms.
   
 A preprint version of the study is available at: https://www.biorxiv.org/content/10.1101/2020.03.10.984963v1
   
-Users who wish to reproduce or extend the evaluation, including the algorithms tested in the study, are welcome to contact us via email: hagai.levi.007@gmail.com.      
-      
+Users who wish to reproduce or extend the evaluation, including the algorithms tested in the study, are welcome to contact us via email: hagai.levi.007@gmail.com.  
+Score files used in the evaluation are available under data/emp_test/original_datasets.  
+RNA files from which GE scores were produced are available at data/ge_datasets.         
 ## Outline
 
 
