@@ -7,7 +7,7 @@ ENSEMBL_TO_GENE_SYMBOLS = "ensembl2gene_symbol.txt"
 ENSEMBL_TO_ENTREZ = "ensembl2entrez.txt"
 
 dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"../")
-PATH_TO_CONF = "config/conf.json"
+PATH_TO_CONF = "config/conf_client.json"
 config_json = json.load(open(os.path.join(dir_path, PATH_TO_CONF)))
 
 GO_DIR=config_json["go_folder"]

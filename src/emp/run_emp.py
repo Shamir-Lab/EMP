@@ -70,7 +70,7 @@ def main():
     parser.add_argument('--n_dist_samples', help="n_dist_samples", dest='n_dist_samples', default=constants.config_json["n_dist_samples"])
     parser.add_argument('--override_permutations', help="override_permutations", dest='override_permutations', default=constants.config_json["override_permutations"])
     parser.add_argument('--additional_args', help="additional_args", dest='additional_args', default=constants.config_json["additional_args"])
-    parser.add_argument('--processes', dest="processes", help='regenerate_bg_distribution,add_go_metadata,calculate_significance', default=constants.config_json["processes"])
+    parser.add_argument('--processes', dest="processes", help='generate_true_solution,regenerate_bg_distribution,add_go_metadata,calculate_significance', default=constants.config_json["processes"])
     args = parser.parse_args()
 
     dataset_file=args.dataset_file
