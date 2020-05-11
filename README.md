@@ -4,6 +4,7 @@ EMP: EMpirical Pipeline for correcting GO terms obtained by network-based module
 
 NBMD algorithms receive a gene network and nodes' activity scores as input and report sub-networks (modules) that are putatively biologically active. We observed that GO terms enriched in modules detected by these methods on the real data were often also enriched after randomly permuting the input data.  
 To tackle this bias, we designed a method that evaluates the empirical significance of GO terms reported as enriched in modules. 
+This version corrects GO terms with more than five genes and less than 500 genes.
 
 We used EMP to evaluate six NBMD methods on GE and GWAS data. 
 * jActiveModules (Ideker et al, 2002)
@@ -15,7 +16,7 @@ We used EMP to evaluate six NBMD methods on GE and GWAS data.
 
 In our evaluation DOMINO outperformed the other algorithms.
   
-A preprint version of the study is available at: https://www.biorxiv.org/content/10.1101/2020.03.10.984963v1
+A preprint version of the study is available at: https://www.biorxiv.org/content/10.1101/2020.03.10.984963v3
   
 Users who wish to reproduce or extend the evaluation, including the algorithms tested in the study, are welcome to contact us via email: hagai.levi.007@gmail.com.  
 Score files used in the evaluation are available under data/emp_test/original_datasets.  
