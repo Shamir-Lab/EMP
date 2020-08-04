@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-"""Calculate differentially expressed genes using EdgeR from bioconductor.
-http://bioconductor.org/packages/2.5/bioc/html/edgeR.html
-Usage:
-    count_diffexp.py <count_file>
-"""
 import sys
 sys.path.insert(0, '../')
 
@@ -64,8 +58,10 @@ class DominoRunner(AbstractRunner):
 
 
 if __name__ == "__main__":
+    constants.N_OF_THREADS=1
+    constants.USE_CACHE=False
     runner=DominoRunner()
-    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/tnfa.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/tnfa_{}".format(runner.ALGO_NAME)), slices_file=os.path.join(constants.config_json["base_dir"],"networks/dip_ng_modularity_components.txt"), module_threshold=0.05, slice_threshold=0.3)
+    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/scz.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/string_minimal_no_prefix_500_g.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/scz_{}".format(runner.ALGO_NAME)), slices_file=os.path.join(constants.config_json["base_dir"],"networks/string_modules_agg.txt"), module_threshold=0.05, slice_threshold=0.3)
 
 
 

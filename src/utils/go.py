@@ -22,7 +22,7 @@ HG_QVAL = "qval"
 HG_VALUE = "value"
 HG_TABLE_HEADERS = [HG_GO_ROOT, HG_GO_ID, HG_GO_NAME, HG_VALUE, HG_PVAL, HG_QVAL]
 
-
+assoc=None
 
 def init_state(go_folder):
     global dict_result, go2geneids, geneids2go, entrez2ensembl, vertices, assoc, terms_to_genes, ids_to_names
@@ -59,7 +59,7 @@ def check_group_enrichment(tested_gene_file_name, total_gene_file_name, go_folde
                 shutil.copyfileobj(f_in, f_out)
 
     global assoc
-    if assoc == None:
+    if assoc is None:
         assoc = read_ncbi_gene2go(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME), no_top=True)
 
     g = GOEnrichmentStudy([int(cur) for cur in ensembl2entrez_convertor(total_gene_list)],
