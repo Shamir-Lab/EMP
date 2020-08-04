@@ -50,11 +50,11 @@ def remove_subgraph_self_loops(nodes_to_remove, network_file_name):
     filtered_network.to_csv(new_file_name, sep="\t", index=False)
     return filtered_network
 
-def remove_subgraph_by_nodes(nodes_to_remove, network_file_name, h_src="ID_interactor_A", h_dst="ID_interactor_B", ts=str(time.time())):
+def remove_subgraph_by_nodes(nodes_to_remove, network_file_name, ts=str(time.time())):
     if len(nodes_to_remove) == 0:
         return network_file_name
     network_df = pd.read_csv(network_file_name, sep="\t")
-    filtered_network = network_df[~(network_df[h_src].isin(nodes_to_remove) | network_df[h_dst].isin(nodes_to_remove))]
+    filtered_network = network_df[~(network_df.iloc[:,0].isin(nodes_to_remove) | network_df.iloc[:,2].isin(nodes_to_remove))]
     new_file_name = os.path.splitext(network_file_name)[0] + ts +".sif"
     filtered_network.to_csv(new_file_name, sep="\t", index=False)
     return new_file_name
@@ -237,9 +237,15 @@ def module_report(algo_name, module_index, module, bg_genes, go_folder, output_f
     print("summarize module {} for algo {}".format(module_index, algo_name))
 
     open(os.path.join(output_folder, "{}_module_genes_{}.txt".format(algo_name, module_index)), "w+").write(
-        "\n".join(module))
-    open(os.path.join(output_folder, "{}_bg_genes_{}.txt".format(algo_name, module_index)), "w+").write(
+        "\n".join(module)) 
+    try:
+        open(os.path.join(output_folder, "{}_bg_genes_{}.txt".format(algo_name, module_index)), "w+").write(
         "\n".join(bg_genes))
+    except Exception as e:
+        # print([a for a in bg_genes if type(a) != str])
+        print(e)
+        raise e
+         
     modules_summary_row = {SH_MODULE_NAME: module_index, SH_NUM_GENES: len(module)}
 
     hg_report = check_group_enrichment(list(module), list(bg_genes), go_folder)
@@ -250,5 +256,6 @@ def module_report(algo_name, module_index, module, bg_genes, go_folder, output_f
         modules_summary.append(modules_summary_row)
 
     return modules_summary_row
+
 
 

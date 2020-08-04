@@ -12,7 +12,7 @@ from src.utils.network import get_network_genes
 from src.runners.abstract_runner import AbstractRunner
 class DominoRunner(AbstractRunner):
     def __init__(self):
-        super().__init__("DOMINO")
+        super().__init__("DOMINO2")
 
 
     def extract_modules_and_bg(self, bg_genes, dest_algo_dir):
@@ -40,8 +40,14 @@ class DominoRunner(AbstractRunner):
 
 
     def run(self, dataset_file_name, network_file_name, output_folder, **kwargs):
-        print("run domino....")
+        print("run domino runner...")
         slices_file = kwargs['slices_file']
+        constants.N_OF_THREADS=1
+        if 'n_of_threads' in kwargs:
+            constants.N_OF_THREADS=kwargs['n_of_threads']
+        constants.USE_CACHE=False
+        if 'use_cache' in kwargs:
+            constants.USE_CACHE=kwargs['use_cache']=='true'
         slice_threshold = 0.3
         if 'slice_threshold' in kwargs:
             slice_threshold = kwargs['slice_threshold']
@@ -49,6 +55,7 @@ class DominoRunner(AbstractRunner):
         if 'module_threshold' in kwargs:
             module_threshold = kwargs['module_threshold']
         active_genes_file, bg_genes = self.init_params(dataset_file_name, network_file_name, output_folder)
+        print(f'domino_parameters: active_genes_file={active_genes_file}, network_file={network_file_name},slices_file={slices_file}, slice_threshold={slice_threshold},module_threshold={module_threshold}')
         modules = domino_main(active_genes_file=active_genes_file, network_file=network_file_name,
                               slices_file=slices_file, slice_threshold=slice_threshold,
                               module_threshold=module_threshold)

@@ -25,7 +25,10 @@ class AbstractRunner(object):
         build_all_reports(algo_name, modules, all_bg_genes, go_folder, output_folder)
 
     def main(self, dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
+        print(f'about to run algo with the following parameters: {os.path.abspath(dataset_file_name)}, {os.path.abspath(network_file_name)}, {os.path.abspath(output_folder)}, {kwargs}')
+        
         modules, all_bg_genes = self.run(os.path.abspath(dataset_file_name), os.path.abspath(network_file_name), os.path.abspath(output_folder), **kwargs)
+        print(f"calculate GO enrichment for {len(modules)} modules")
         self.build_all_reports(self.ALGO_NAME, modules, all_bg_genes, os.path.abspath(go_folder), os.path.abspath(os.path.join(output_folder, "report")))
 
 

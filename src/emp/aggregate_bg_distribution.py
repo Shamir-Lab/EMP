@@ -133,8 +133,7 @@ def main():
 
     dataset_name = os.path.splitext(os.path.split(dataset_file)[1])[0]
     df_real_pvals = get_all_modules_sig_scores(os.path.join(true_solutions_folder, "{}_{}".format(dataset_name,algo), "report"))
-    df_real_pvals=df_real_pvals.apply(lambda x: -np.log10(x))
-
+    df_real_pvals=df_real_pvals.apply(lambda x: -np.log10(x)) 
     df_real_pvals_as_list = df_real_pvals.apply(lambda x: str(list(x)), axis=1).to_frame()
     df_real_pvals_as_list.index = df_real_pvals.index
 

@@ -49,13 +49,14 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
     max_genes_pvals=np.append(max_genes_pvals,np.ones(constants.N_GO_TERMS - np.size(max_genes_pvals)))
     fdr_results = fdrcorrection0(max_genes_pvals, alpha=0.05, method='indep', is_sorted=False)
     n_hg_true = len([cur for cur in fdr_results[0] if cur == True])
-    HG_CUTOFF=np.sort(max_genes_pvals)[n_hg_true-1]
+    HG_CUTOFF=(np.sort(max_genes_pvals)[n_hg_true-1] if n_hg_true > 0 else 0)
     print("HG cutoff: {}, (ES={}, n={})".format(HG_CUTOFF, -np.log10(HG_CUTOFF), n_hg_true))
 
     output_md = output_md.loc[np.logical_and.reduce(
         [output_md.loc[:,"n_genes"].values > 5, output_md.loc[:,"n_genes"].values < 500,
-         output_md.loc[:,"hg_pval_max"].values > np.log10(HG_CUTOFF)]), :]
+         output_md.loc[:,"hg_pval_max"].values+0.000001 >= -np.log10(HG_CUTOFF)]), :]
 
+    print(dist_path.format(dataset_sample, algo_sample))
     output = pd.read_csv(dist_path.format(dataset_sample, algo_sample),
         sep='\t', index_col=0).dropna()
     output = output.rename(columns={"filtered_pval": "hg_pval"})
@@ -77,7 +78,6 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
     for index, cur in output.iterrows():
         if counter == limit: break
         pval = np.array([float(x) for x in cur["dist_n_samples"][1:-1].split(", ")])[i_dist]
-            
         emp_pvals.append(calc_emp_pval(cur["hg_pval"], pval))
         output_md.loc[index,'emp_pval']=emp_pvals[-1]
         emp_dists.append(pval)
@@ -106,7 +106,7 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
     if n_emp_true==0: 
        EMP_TH=0
     else: 
-       EMP_TH=np.sort(max_emp_pvals)[n_emp_true-1]
+       EMP_TH=(np.sort(max_emp_pvals)[n_emp_true-1] if n_emp_true > 0 else 0)
      
     mask_terms=np.array([max(a, 1.0 / n_dist_samples)<=EMP_TH for a in emp_pvals])
     go_ids_result=np.array([])
