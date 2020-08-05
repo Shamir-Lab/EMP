@@ -33,7 +33,7 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
     max_genes_pvals = reduce(lambda a, x: np.append(a, np.min(x)), n_genes_pvals, np.array([]))
     print("total n_genes with pval:{}/{}".format(max_genes_pvals.shape[0], constants.N_GO_TERMS))
     max_genes_pvals = np.append(max_genes_pvals, np.ones(constants.N_GO_TERMS - np.size(max_genes_pvals)))
-    fdr_results = fdrcorrection0(max_genes_pvals, alpha=0.05, method='indep', is_sorted=False)
+    fdr_results = fdrcorrection0(max_genes_pvals, alpha=0.001, method='indep', is_sorted=False)
     max_true_counter = np.sum(fdr_results[0])
     HG_CUTOFF = -np.log10(np.sort(max_genes_pvals))[max_true_counter - 1] if max_true_counter > 0 else 0
     print("HG cutoff: {}".format(HG_CUTOFF))

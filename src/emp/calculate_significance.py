@@ -47,7 +47,7 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
 
     print("total n_genes with pval less than one: {}/{}".format(np.size(max_genes_pvals), constants.N_GO_TERMS))
     max_genes_pvals=np.append(max_genes_pvals,np.ones(constants.N_GO_TERMS - np.size(max_genes_pvals)))
-    fdr_results = fdrcorrection0(max_genes_pvals, alpha=0.05, method='indep', is_sorted=False)
+    fdr_results = fdrcorrection0(max_genes_pvals, alpha=0.001, method='indep', is_sorted=False)
     n_hg_true = len([cur for cur in fdr_results[0] if cur == True])
     HG_CUTOFF=(np.sort(max_genes_pvals)[n_hg_true-1] if n_hg_true > 0 else 0)
     print("HG cutoff: {}, (ES={}, n={})".format(HG_CUTOFF, -np.log10(HG_CUTOFF), n_hg_true))
