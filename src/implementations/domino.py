@@ -56,7 +56,6 @@ def create_subgraph(params):
     cur_module=params
     global G_modularity
     nodes=set(cur_module)
-    # [nodes.discard(a) for a in ['ENSG00000234906', 'ENSG00000153037', 'ENSG00000250506', 'ENSG00000228049', 'ENSG00000225830', 'ENSG00000150527']]
     res=G_modularity.subgraph(list(nodes))
     return res
 

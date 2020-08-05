@@ -267,8 +267,8 @@ def fetch_go_hierarcy(go_folder):
 
     print("Loading gene-GO associations")
 
-    go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True)
-    geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606])
+    go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True, ev_exclude=set(['IPI', 'IMP', 'IGI', 'IEP', 'HMP', 'HGI', 'HEP']))
+    geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606], ev_exclude=set(['IPI', 'IMP', 'IGI', 'IEP', 'HMP', 'HGI', 'HEP']))
 
     ## backward compatibility to goatools python 2.7##
     # all_go_ids=set().union(*list(geneids2go.values()))
