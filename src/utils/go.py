@@ -26,9 +26,8 @@ assoc=None
 
 def init_state(go_folder):
     global dict_result, go2geneids, geneids2go, entrez2ensembl, vertices, assoc, terms_to_genes, ids_to_names
-    dict_result, go2geneids, geneids2go, entrez2ensembl = go_hierarcies.build_hierarcy(go_folder, roots=['GO:0008150'])
+    dict_result, go2geneids, geneids2go, entrez2ensembl = go_hierarcies.build_hierarcy(go_folder, roots=[constants.ROOT_GO_ID], ev_exclude=constants.EV_EXCLUDE)
     vertices = list(dict_result.values())[0]['vertices']
-    assoc=None
     terms_to_genes = {}
     ids_to_names = None
 

@@ -247,7 +247,7 @@ def write_hier_mrk(gosubdag, out):
     objwr.prt_hier_down("GO:0000001", out)
 
 
-def fetch_go_hierarcy(go_folder):
+def fetch_go_hierarcy(go_folder, ev_exclude):
     obo_file_location = os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)
     if not os.path.exists(os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)):
         wget.download(constants.GO_OBO_URL, os.path.join(constants.GO_DIR, constants.GO_FILE_NAME))
@@ -267,8 +267,8 @@ def fetch_go_hierarcy(go_folder):
 
     print("Loading gene-GO associations")
 
-    go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True, ev_exclude=set(['IPI', 'IMP', 'IGI', 'IEP', 'HMP', 'HGI', 'HEP']))
-    geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606], ev_exclude=set(['IPI', 'IMP', 'IGI', 'IEP', 'HMP', 'HGI', 'HEP']))
+    go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True, ev_exclude=ev_exclude)
+    geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606], ev_exclude=ev_exclude)
 
     ## backward compatibility to goatools python 2.7##
     # all_go_ids=set().union(*list(geneids2go.values()))
@@ -282,9 +282,9 @@ def fetch_go_hierarcy(go_folder):
 #################################################################
 # Driver
 #################################################################
-def build_hierarcy(go_folder, roots=['GO:0008150']): #  0008150 0005575 0003674
+def build_hierarcy(go_folder, roots=['GO:0008150'], ev_exclude=set()): #  0008150 0005575 0003674
 
-    go2geneids, geneids2go = fetch_go_hierarcy(go_folder)
+    go2geneids, geneids2go = fetch_go_hierarcy(go_folder, ev_exclude)
 
     """Run numerous tests for various reports."""
     dag_fin = os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)
