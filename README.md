@@ -11,13 +11,13 @@ We used EMP to evaluate six AMI methods on GE and GWAS data.
 * HotNet2 (Raphael et al, 2015)
 * KeyPathwayMiner (Alcaraz et al, 2012)
 * Bionet (Beisser et al, 2010)
-* DOMINO - An algorithm we developed that produces reduced false GO term calls (https://github.com/Shamir-Lab/DOMINO) 
+* [DOMINO](https://github.com/Shamir-Lab/DOMINO) - An algorithm we developed that produces reduced false GO term calls 
 
 In our evaluation DOMINO outperformed the other algorithms.
   
 A preprint version of the study is available at [BioRxiv](https://www.biorxiv.org/content/10.1101/2020.03.10.984963v1)
   
-If you wish to reproduce or extend the evaluation, please visit [the repository of our benchmark](https://github.com/Shamir-Lab/EMP-benchmark).
+If you wish to reproduce or extend our benchmark, please visit [the repository of the evaluation criteria](https://github.com/Shamir-Lab/EMP-benchmark).
 ## Outline
 
 
