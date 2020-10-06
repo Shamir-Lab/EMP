@@ -8,7 +8,7 @@ To correct this bias, we designed EMP (EMpirical Pipeline), a method that evalua
 
 We used EMP to evaluate six AMI methods on gene expression and GWAS data. jActiveModules (Ideker et al, 2002), NetBox (Cerami et al, 2010), HotNet2 (Raphael et al, 2015), KeyPathwayMiner (Alcaraz et al, 2012), Bionet (Beisser et al, 2010) and [DOMINO](https://github.com/Shamir-Lab/DOMINO) – a new algorithm developed by our lab. A preprint version of the study is available [here](https://www.biorxiv.org/content/10.1101/2020.03.10.984963v2)
 
-If you wish to reproduce or extend the evaluation, please go to the [repository of the evluation criteria](https://github.com/Shamir-Lab/EMP-benchmark).
+If you wish to reproduce or extend the evaluation, please go to the [evaluation criteria's repository](https://github.com/Shamir-Lab/EMP-benchmark).
 
 Score files used in the evaluation are available under data/emp_test/original_datasets.
 RNA files from which gene expression scores were produced are available at data/ge_datasets.
