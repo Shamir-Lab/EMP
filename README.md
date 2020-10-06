@@ -1,11 +1,11 @@
 # EMP
 
-EMP: EMpirical Pipeline for correcting GO terms obtained by network-based module discovery (NBMD) algorithms.
+EMP: EMpirical Pipeline for correcting GO terms obtained by active module identification (AMI) algorithms.
 
-NBMD algorithms receive a gene network and nodes' activity scores as input and report sub-networks (modules) that are putatively biologically active. We observed that GO terms enriched in modules detected by these methods on the real data were often also enriched after randomly permuting the input data.  
+AMI algorithms receive a gene network and nodes' activity scores as input and report sub-networks (modules) that are putatively biologically active. We observed that GO terms enriched in modules detected by these methods on the real data were often also enriched after randomly permuting the input data.  
 To tackle this bias, we designed a method that evaluates the empirical significance of GO terms reported as enriched in modules. 
 
-We used EMP to evaluate six NBMD methods on GE and GWAS data. 
+We used EMP to evaluate six AMI methods on GE and GWAS data. 
 * jActiveModules (Ideker et al, 2002)
 * NetBox (Cerami et al, 2010)
 * HotNet2 (Raphael et al, 2015)
@@ -24,7 +24,7 @@ RNA files from which GE scores were produced are available at data/ge_datasets.
 
 
 - [Set your environment](#set-your-environment)
-- [Integrate your NBMD algorithm with EMP](#integrate-your-nbmd-algorithm-with-emp)
+- [Integrate your AMI algorithm with EMP](#integrate-your-ami-algorithm-with-emp)
 - [Run EMP](#run-emp)
 - [Main output files](#main-output-files)
 
@@ -50,9 +50,9 @@ pip install -r  config/dependencies.txt
 ```
 
 
-## Integrate your NBMD algorithm with EMP
+## Integrate your AMI algorithm with EMP
 
-First, you need to make EMP to be aware to your NBMD algorithm.    
+First, you need to make EMP to be aware to your AMI algorithm.    
 1. Create an endpoint file your algorithm.  This file your algorithm should inherent AbstractRunner class (see `src/runnners/abstract_runners.py`).   
 2. Make EMP acknowledged your algorithm by adding its instance to `ALGO_BY_NAMES` dictionary (under `src/runner/run_algo.py`). you can to it directly where `ALGO_BY_NAMES` is declared or at runtime   
  
@@ -75,7 +75,7 @@ parameters:
 2. `generate_permuted_solutions.py`: Generate permuted solutions:  
 parameters:  
 `--dataset_file`: path to dataset file.  
-`--algo`: NBMD algorithm.  
+`--algo`: AMI algorithm.  
 `--permuted_datasets_folder`: folder where permuted datasets reside.  
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--go_folder`: folder where GO files are located.  
@@ -84,22 +84,22 @@ parameters:
 `--pf`: parallelization factor - number of cores EMP uses.  
 `--network_file`: file of the biological network of the analysis.  
 `--override_permutations`: whether existing permutation with same positional index should be deleted.  
-`--additional_args`: additional arguments that are relevant to a particular NBMD algorithm.   
+`--additional_args`: additional arguments that are relevant to a particular AMI algorithm.   
   
-3. `generate_true_solution.py`: Generates an NBMD solution based on the original (i.e. non-permuted) scores.  
+3. `generate_true_solution.py`: Generates an AMI solution based on the original (i.e. non-permuted) scores.  
 parameters:  
 `--dataset_file`: path to dataset file.  
-`--algo`: NBMD algorithm.  
+`--algo`: AMI algorithm.  
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
 `--go_folder`: folder where GO files are located.
 `--network_file`: file of the biological network of the analysis.  
-`--additional_args`: additional arguments that are relevant to a particular NBMD algorithm. 
+`--additional_args`: additional arguments that are relevant to a particular AMI algorithm. 
   
 4. `aggregare_bg_distribution.py`: Aggregates permuted solutions into a background distribution.  
 parameters:  
 `--dataset_file`: path to dataset file.  
-`--algo`: NBMD algorithm.  
+`--algo`: AMI algorithm.  
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
 `--report_folder`: folder where analysis results reside.  
@@ -111,25 +111,25 @@ parameters:
 5. `add_go_metadata.py`: Adds metadata for GO terms
 parameters:  
 `--dataset_file`: path to dataset file.  
-`--algo`: NBMD algorithm.  
+`--algo`: AMI algorithm.  
 `--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`   
 `--report_folder`: folder where analysis results reside.  
 `--n_permutations`: file of the biological network according which the analysis is carried.
 
 6. `calculate_significance.py`: Calculates empirical p-values and correct for multiple testing (FDR):  
 `--dataset_file`: path to dataset file.  
-`--algo`: NBMD algorithm.  
+`--algo`: AMI algorithm.  
 `--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`  
 `--report_folder`: folder where analysis results reside.  
 `--n_total_samples`: enrichment score scores set size. This set is used to build the empirical distribution.  
 `--n_dist_samples`: number of enrichment scores in the empirical distribution.  
-`--additional_args`: additional arguments that are relevant to a particular NBMD algorithm.
+`--additional_args`: additional arguments that are relevant to a particular AMI algorithm.
   
 Alternatively, you can run several steps sequentially with `run_emp.py`:
 
 
 `--dataset_file`: path to dataset file.  
-`--algo`: NBMD algorithm.  
+`--algo`: AMI algorithm.  
 `--permuted_datasets_folder`: folder where permuted datasets reside.  
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
@@ -143,7 +143,7 @@ Alternatively, you can run several steps sequentially with `run_emp.py`:
 `--n_permutations`: file of the biological network according which the analysis is carried.  
 `--n_total_samples`: enrichment score scores set size. This set is used to build the empirical distribution.  
 `--n_dist_samples`: number of enrichment scores in the empirical distribution.  
-`--additional_args`: additional arguments that are relevant to a particular NBMD algorithm  
+`--additional_args`: additional arguments that are relevant to a particular AMI algorithm  
 `--processes`: comman delimited list of processes that should be carried.  names of processes are the same as its file name, excluding the file extension (.py) e.g "generate_permuted_datasets,generate_permuted_solution"  
 
 Parameters default values are defined at `config/conf.json`  
