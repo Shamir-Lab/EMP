@@ -20,3 +20,5 @@ EV_EXCLUDE=set(config_json["ev_exclude"].split(','))
 
 ALGO_DIR=config_json["algo_dir"]
 
+TIMER_DIR=config_json["timer_dir"]
+

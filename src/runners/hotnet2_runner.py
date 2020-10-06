@@ -85,7 +85,7 @@ class Hotnet2Runner(AbstractRunner):
 
 
 
-    def run(self, dataset_file_name, network_file_name, output_folder):
+    def run(self, dataset_file_name, network_file_name, output_folder, **kwargs):
         heat_file_name, bg_genes, cache_folder = self.init_params(dataset_file_name, output_folder, network_file_name)
         script_file_name = format_script(os.path.join(constants.dir_path, "src/sh", "run_{}.sh".format(self.ALGO_NAME)),
                                          ALGO_DIR=self.ALGO_DIR,
@@ -95,12 +95,11 @@ class Hotnet2Runner(AbstractRunner):
                                stdout=subprocess.PIPE).stdout.read())  # cwd=dir_path
         os.remove(script_file_name)
         modules, all_bg_genes = self.extract_modules_and_bg(bg_genes, cache_folder, output_folder)
-        print(len(modules))
         return modules, all_bg_genes
 
-    def main(self, dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
-            modules, all_bg_genes = self.run(os.path.abspath(dataset_file_name), os.path.abspath(network_file_name), os.path.abspath(output_folder), **kwargs)
-            # self.build_all_reports(self.ALGO_NAME, modules, all_bg_genes, os.path.abspath(go_folder), os.path.abspath(os.path.join(output_folder, "report")))
+    # def main(self, dataset_file_name, network_file_name, go_folder, output_folder, **kwargs):
+    #         modules, all_bg_genes = self.run(os.path.abspath(dataset_file_name), os.path.abspath(network_file_name), os.path.abspath(output_folder), **kwargs)
+    #         # self.build_all_reports(self.ALGO_NAME, modules, all_bg_genes, os.path.abspath(go_folder), os.path.abspath(os.path.join(output_folder, "report")))
 
 if __name__ == "__main__":
     runner=Hotnet2Runner()

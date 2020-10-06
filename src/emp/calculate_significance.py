@@ -32,10 +32,13 @@ def calc_emp_pval(cur_rv, cur_dist):
 def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 300, n_total_samples = None, n_start_i=None, limit = 10000, md_path=None, dist_path=None, filtered_go_ids_file="", hg_th=0.0001):
 
 
-    output_md = pd.read_csv(md_path.format(dataset_sample, algo_sample), sep='\t', index_col=0).dropna()
-    filtered_go_ids=open(filtered_go_ids_file,'r').read().split()
-
-    max_genes_pvals = np.power(10, -output_md.loc[filtered_go_ids, "hg_pval_max"])
+    filtered_go_ids=open(filtered_go_ids_file,'r').read().split()+[constants.ROOT_GO_ID]
+    try:
+        output_md = pd.read_csv(md_path.format(dataset_sample, algo_sample), sep='\t', index_col=0).reindex(filtered_go_ids).dropna()
+    except Exception:
+        return None
+       
+    max_genes_pvals = np.power(10, -output_md.loc[:, "hg_pval_max"])
     print("total n_genes with pval less than one: {}/{}".format(np.size(max_genes_pvals), len(filtered_go_ids)))
     max_genes_pvals=np.append(max_genes_pvals,np.ones(len(filtered_go_ids) - np.size(max_genes_pvals)))
 
@@ -44,7 +47,7 @@ def calculate_sig(algo_sample = None, dataset_sample = None, n_dist_samples = 30
     HG_CUTOFF=(np.sort(max_genes_pvals)[n_hg_true-1] if n_hg_true > 0 else -1)
     print("HG cutoff: {}, (ES={}, n={})".format(HG_CUTOFF, -np.log10(HG_CUTOFF), n_hg_true))
 
-    output_md = output_md.loc[filtered_go_ids,:].loc[output_md.loc[filtered_go_ids, "hg_pval_max"].values >= -np.log10(HG_CUTOFF), :]
+    output_md = output_md.loc[output_md.loc[:, "hg_pval_max"].values >= -np.log10(HG_CUTOFF), :]
 
 
     print(dist_path.format(dataset_sample, algo_sample))
@@ -142,8 +145,13 @@ def main():
     md_path=os.path.join(report_folder, "emp_diff_modules_{}_{}_md.tsv")
     dist_path=os.path.join(report_folder,"emp_diff_modules_{}_{}.tsv")
 
-    EMP_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms, emp_pvals_mat = \
-        calculate_sig(algo, dataset_name, n_dist_samples, n_total_samples, md_path=md_path, dist_path=dist_path, filtered_go_ids_file=filtered_go_ids_file, hg_th=hg_th)
+    res=calculate_sig(algo, dataset_name, n_dist_samples, n_total_samples, md_path=md_path, dist_path=dist_path, filtered_go_ids_file=filtered_go_ids_file, hg_th=hg_th) 
+    if res is None:
+        print("md files is missing. No oob file was produced")
+        return
+
+    EMP_TH, n_emp_true, HG_CUTOFF, n_hg_true, go_ids_result, go_names_result, mask_ids, mask_terms, emp_pvals_mat=res 
+
 
 
     output_md = pd.read_csv(
@@ -164,5 +172,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 

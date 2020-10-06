@@ -25,9 +25,9 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
     df["n_genes"] = pd.Series(n_genes, index=df.index)
     df["hg_pval_max"] = df["hg_pval"].apply(lambda a: a if type(a) != str else np.max(np.array(a[1:-1].split(", "), dtype=np.float32)))
 
-    filtered_go_ids=open(filtered_go_ids_file,'r').read().split()
+    filtered_go_ids=open(filtered_go_ids_file,'r').read().split() + [constants.ROOT_GO_ID]
 
-    n_genes_pvals = [np.power([10 for a in range(x.count(",") + 1)], -np.array(x[1:-1].split(", ")).astype(np.float)) for x in df.loc[filtered_go_ids, "hg_pval"]]
+    n_genes_pvals = [np.power([10 for a in range(x.count(",") + 1)], -np.array(x[1:-1].split(", ")).astype(np.float)) for x in df.reindex(filtered_go_ids).loc[:, "hg_pval"].dropna()]
     max_genes_pvals = reduce(lambda a, x: np.append(a, np.min(x)), n_genes_pvals, np.array([]))
     print("total n_genes with pval:{}/{}".format(max_genes_pvals.shape[0], len(filtered_go_ids)))
     max_genes_pvals = np.append(max_genes_pvals, np.ones(len(filtered_go_ids) - np.size(max_genes_pvals)))
@@ -36,7 +36,7 @@ def add_md_to_terms(dataset="SOC", algo="jactivemodules_sa", n_permutations=300,
     HG_CUTOFF = -np.log10(np.sort(max_genes_pvals))[max_true_counter - 1] if max_true_counter > 0 else -1
     print("HG cutoff: {}".format(HG_CUTOFF))
 
-    included_terms=df.loc[filtered_go_ids, "hg_pval_max"].apply(lambda a: True)# apply(lambda row: np.any(np.array(row[1:-1].split(', ') if type(row) == str else [row], dtype=np.float) >= HG_CUTOFF))
+    included_terms=df.loc[filtered_go_ids, "hg_pval_max"].apply(lambda a: True)# apply(lambda row: np.any(np.array(row[1:-1].split(', ') if type(row) == str else [row],dtype=np.float) >= HG_CUTOFF))
     included_terms=df.index.isin(included_terms[included_terms].index)
     df_filtered_in = df.loc[included_terms, :]
     df_filtered_out = df.loc[~included_terms, :]
@@ -80,9 +80,15 @@ def main():
     csv_file_name=os.path.join(report_folder, "emp_diff_modules_{dataset}_{algo}.tsv")
 
     df_all=add_md_to_terms(dataset_name, algo, n_permutations, csv_file_name=csv_file_name, filtered_go_ids_file=filtered_go_ids_file, hg_th=hg_th)
-    df_all.loc[:, :][
-        ["GO name", "hg_pval", "hg_pval_max", "hg_rank", "n_genes"]].to_csv(csv_file_name.format(dataset=dataset_name, algo=algo)[:-4] + "_md.tsv", sep='\t') # df_all["hg_pval_max"].values > 0 # "passed_fdr", "emp_pval", "emp_rank"
+    try:
+        df_all=df_all.loc[:, ["GO name", "hg_pval", "hg_pval_max", "hg_rank", "n_genes"]]
+    except Exception:
+        print("agg file was missing. No md file was produced")
+        return 
+
+    df_all.to_csv(csv_file_name.format(dataset=dataset_name, algo=algo)[:-4] + "_md.tsv", sep='\t') # df_all["hg_pval_max"].values > 0 # "passed_fdr", "emp_pval", "emp_rank"
 
 
 if __name__=="__main__":
     main()
+

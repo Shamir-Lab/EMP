@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, '../')
-
+sys.path.insert(0, '../..')
 import os
 import pandas as pd
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     constants.N_OF_THREADS=1
     constants.USE_CACHE=False
     runner=DominoRunner()
-    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/scz.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/string_minimal_no_prefix_500_g.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/scz_{}".format(runner.ALGO_NAME)), slices_file=os.path.join(constants.config_json["base_dir"],"networks/string_modules_agg.txt"), module_threshold=0.05, slice_threshold=0.3)
+    runner.main(dataset_file_name=os.path.join(constants.config_json["base_dir"],"original_datasets/brca1.tsv"), network_file_name=os.path.join(constants.config_json["base_dir"],"networks/dip.sif"), go_folder=os.path.join(constants.config_json["base_dir"],"go"), output_folder=os.path.join(constants.config_json["base_dir"],"true_solutions/brca1_{}".format(runner.ALGO_NAME)), slices_file=os.path.join(constants.config_json["base_dir"],"networks/dip_louvain_slices.txt"), module_threshold=0.05, slice_threshold=0.3)
 
 
 
