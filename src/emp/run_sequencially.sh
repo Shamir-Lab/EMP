@@ -20,7 +20,7 @@ for alg in "${algs[@]}"
     do 
     for ds in "${dss[@]}" 
         do
-        python ${1}.py --pf ${pf} --algo ${alg} --dataset_file /specific/netapp5/gaga/hagailevi/emp_test/original_datasets/${ds}.tsv
+        python ${1}.py --algo ${alg} --dataset_file /specific/netapp5/gaga/hagailevi/emp_test/original_datasets/${ds}.tsv  --pf ${pf}
     done
 done
 

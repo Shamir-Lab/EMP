@@ -39,7 +39,7 @@ def get_best_module_sig_score(report_folder, shared_list):
                 pass
 
         if len(df_go_pvals.index)==0:
-            df_go_pvals=pd.DataFrame(data=np.array([[1]]),index=[constants.BP_GO_ID])
+            df_go_pvals=pd.DataFrame(data=np.array([[1]]), index=[constants.ROOT_GO_ID])
 
 
         if shared_list is not None:

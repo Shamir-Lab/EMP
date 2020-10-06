@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-"""Calculate differentially expressed genes using EdgeR from bioconductor.
-http://bioconductor.org/packages/2.5/bioc/html/edgeR.html
-Usage:
-    count_diffexp.py <count_file>
-"""
 import sys
 sys.path.insert(0, '../')
 

@@ -19,6 +19,8 @@ from  goatools.associations import read_ncbi_gene2go
 from src import constants
 from src.utils.ensembl2entrez import get_entrez2ensembl_dictionary
 import wget, os
+import shutil
+import gzip
 
 class WrHierGO(object):
     """Write hierarchy object."""
@@ -245,21 +247,28 @@ def write_hier_mrk(gosubdag, out):
     objwr.prt_hier_down("GO:0000001", out)
 
 
-def fetch_go_hierarcy():
+def fetch_go_hierarcy(go_folder, ev_exclude):
     obo_file_location = os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)
     if not os.path.exists(os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)):
         wget.download(constants.GO_OBO_URL, os.path.join(constants.GO_DIR, constants.GO_FILE_NAME))
 
     print("Downloading gene-GO associations")
     association_file_location = os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME)
-    if not os.path.exists(association_file_location):
-        wget.download(constants.GO_ASSOCIATION_GENE2GEO_URL,
-                      os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME))
+    # if not os.path.exists(association_file_location):
+    #     wget.download(constants.GO_ASSOCIATION_GENE2GEO_URL,
+    #                   os.path.join(constants.GO_DIR, constants.GO_ASSOCIATION_FILE_NAME))
+
+    if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME)):
+        if not os.path.exists(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME+".gz")):
+            wget.download(constants.GO_ASSOCIATION_GENE2GEO_URL, os.path.join(constants.GO_DIR, os.path.split(constants.GO_ASSOCIATION_GENE2GEO_URL)[1]))
+        with gzip.open(os.path.join(go_folder, os.path.basename(constants.GO_ASSOCIATION_GENE2GEO_URL)), 'rb') as f_in:
+            with open(os.path.join(go_folder, constants.GO_ASSOCIATION_FILE_NAME),'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
 
     print("Loading gene-GO associations")
 
-    go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True)
-    geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606])
+    go2geneids = read_ncbi_gene2go(association_file_location, taxids=[9606], go2geneids=True, ev_exclude=ev_exclude)
+    geneids2go = read_ncbi_gene2go(association_file_location, taxids=[9606], ev_exclude=ev_exclude)
 
     ## backward compatibility to goatools python 2.7##
     # all_go_ids=set().union(*list(geneids2go.values()))
@@ -273,9 +282,9 @@ def fetch_go_hierarcy():
 #################################################################
 # Driver
 #################################################################
-def build_hierarcy(roots=['GO:0008150']): #  0008150 0005575 0003674
+def build_hierarcy(go_folder, roots=['GO:0008150'], ev_exclude=set()): #  0008150 0005575 0003674
 
-    go2geneids, geneids2go = fetch_go_hierarcy()
+    go2geneids, geneids2go = fetch_go_hierarcy(go_folder, ev_exclude)
 
     """Run numerous tests for various reports."""
     dag_fin = os.path.join(constants.GO_DIR, constants.GO_FILE_NAME)
