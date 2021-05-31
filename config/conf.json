@@ -10,7 +10,7 @@
   "hg_th" : "0.05",
   "permuted_datasets_folder" : "../../data/emp_test/permuted_datasets",
   "permuted_solutions_folder" : "../../data/emp_test/permuted_solutions",
-  "true_solutions_folder" : "../../emp_test/true_solutions",
+  "true_solutions_folder" : "../../data/emp_test/true_solutions",
   "report_folder" : "../../data/emp_test/report",
   "n_start" : "0",
   "n_end" : "1010",

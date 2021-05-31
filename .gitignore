@@ -7,3 +7,5 @@
 *.pyc
 /src/sh/*.sh
 *.swp
+/emp-env
+

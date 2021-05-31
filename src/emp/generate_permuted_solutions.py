@@ -69,6 +69,8 @@ def main():
             params=[ [empirical_dist_iteration, [dataset_file, x, algo, network_file, go_folder, permuted_datasets_folder, permuted_solutions_folder, additional_args]] for x in np.arange(int(n_start), int(n_end)) if override_permutations or not permutation_solution_exists(dataset_name, algo, x, permuted_solutions_folder)]
             print("about to start generation of {} permuted solutions".format(len(params)))
             p.map(func_star, params)
+            # for a in params:
+            #     a[0](*a[1])
             break_loop=True
 
         except (Exception, MemoryError, OSError) as e:
