@@ -38,3 +38,4 @@ wget==3.2
 xlrd==1.2.0
 XlsxWriter==1.2.7
 zipp==2.2.0
+python-louvain==0.14
