@@ -12,7 +12,7 @@ from src.utils.network import get_network_genes
 from src.runners.abstract_runner import AbstractRunner
 class DominoRunner(AbstractRunner):
     def __init__(self):
-        super().__init__("DOMINO2")
+        super().__init__("DOMINO")
 
 
     def extract_modules_and_bg(self, bg_genes, dest_algo_dir):

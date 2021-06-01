@@ -81,7 +81,7 @@ parameters:
 `--n_end`: ending positional index of permuted datasets/solutions.  
 `--pf`: parallelization factor - number of cores EMP uses.  
 `--network_file`: file of the biological network of the analysis.  
-`--override_permutations`: whether existing permutation with same positional index should be deleted.  
+`--override_permutations`: whether existing permutation with the same positional index should be deleted.  
 `--additional_args`: additional arguments that are relevant to a particular AMI algorithm.   
   
 3. `generate_true_solution.py`: Generates an AMI solution based on the original (i.e. non-permuted) scores.  
@@ -90,7 +90,7 @@ parameters:
 `--algo`: AMI algorithm.  
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
-`--go_folder`: folder where GO files are located.
+`--go_folder`: folder where GO files are located.  
 `--network_file`: file of the biological network of the analysis.  
 `--additional_args`: additional arguments that are relevant to a particular AMI algorithm. 
   
@@ -132,7 +132,7 @@ Alternatively, you can run several steps sequentially with `run_emp.py`:
 `--permuted_solutions_folder`: folder where permuted solutions reside.  
 `--true_solutions_folder`: folder where true solutions reside.  
 `--report_folder`: folder where analysis results reside.  
-`--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz` 
+`--go_folder`: folder where GO files are located. This folder should contain the files "go.obo" GO term file, "gene2go" association file. The files for human are available at `http://purl.obolibrary.org/obo/go/go-basic.obo`, `https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2go.gz`.  
 `--n_start`: starting positional index of permuted datasets/solutions.  
 `--n_end`: ending positional index of permuted datasets/solutions.  
 `--pf`: parallelization factor - number of cores EMP uses.  
