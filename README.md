@@ -25,6 +25,7 @@ If you wish to reproduce or extend our benchmark, please visit [the repository o
 - [Integrate your AMI algorithm with EMP](#integrate-your-ami-algorithm-with-emp)
 - [Run EMP](#run-emp)
 - [Main output files](#main-output-files)
+- [EMP container](#emp-container)
 
 ## Set your environment
 
@@ -166,3 +167,19 @@ fields of `emp_diff_modules_...` matrices:
 * `emp_pval`: list of empirical p-values of each module per GO term of the real solution
 * `emp_pval_max`: number of genes under each GO term (or its descendants)
 * `is_emp_pval_max_significant`: boolean indicating whether the empirical p-value is significant (i.e. below 0.05 th) 
+
+
+## EMP container
+EMP is also available as ready-to-use tool in a container
+The container was generated and tested using udocker.It can also be loaded using Docker.
+To load the container using udocker, do the following steps:
+* Install [udocker](https://github.com/indigo-dc/udocker)
+* Download the container from [here](https://drive.google.com/file/d/1kJLINKQNBMIUs-npavlzo8f4eOZf2Lls/view?usp=sharing)
+* Load the container by running `udocker import --tocontainer --clone --name=emp emp-ubuntu-18.tar`
+* Go inside the container by running `udocker run emp`
+* the EMP project resides under /sandbox/
+* EMP can be executed as described above in this README.
+  * Advanced users can also be run EMP using /sandbox/main.sh.
+    
+
+
